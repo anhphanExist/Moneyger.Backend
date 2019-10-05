@@ -3,7 +3,6 @@ D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Money
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\bin\Debug\netcoreapp2.2\Moneyger.runtimeconfig.dev.json
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\bin\Debug\netcoreapp2.2\Moneyger.dll
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\bin\Debug\netcoreapp2.2\Moneyger.pdb
-D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\obj\Debug\netcoreapp2.2\Moneyger.csprojAssemblyReference.cache
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\obj\Debug\netcoreapp2.2\Moneyger.csproj.CoreCompileInputs.cache
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\obj\Debug\netcoreapp2.2\Moneyger.RazorAssemblyInfo.cache
 D:\STUDY\Ongoing Subject\Assignment - MoneyLover\Moneyger.Backend\Moneyger\Moneyger\obj\Debug\netcoreapp2.2\Moneyger.RazorAssemblyInfo.cs
