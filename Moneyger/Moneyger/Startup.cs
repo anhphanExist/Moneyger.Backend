@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moneyger.Common;
 
 namespace Moneyger
 {
@@ -25,6 +26,12 @@ namespace Moneyger
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.Scan(scan => scan
+                .FromAssemblyOf<IServiceScoped>()
+                   .AddClasses(classes => classes.AssignableTo<IServiceScoped>())
+                       .AsImplementedInterfaces()
+                       .WithScopedLifetime());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
