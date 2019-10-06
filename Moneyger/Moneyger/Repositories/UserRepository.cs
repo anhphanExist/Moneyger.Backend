@@ -26,7 +26,8 @@ namespace Moneyger.Repositories
         {
             if (!string.IsNullOrEmpty(userFilter.Username))
             {
-                query = query.Where(u => u.Username.Equals(userFilter.Username));
+                query = query.Where(u => u.Username.Equals(userFilter.Username) && 
+                    u.Password.Equals(userFilter.Password));
             }
             return query;
         }
