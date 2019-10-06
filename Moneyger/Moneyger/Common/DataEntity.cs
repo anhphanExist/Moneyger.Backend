@@ -7,5 +7,6 @@ namespace Moneyger.Common
 {
     public class DataEntity
     {
+
     }
 }
