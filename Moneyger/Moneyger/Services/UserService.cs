@@ -13,7 +13,7 @@ namespace Moneyger.Services
         Task<User> Login(UserFilter userFilter);
         Task<User> ChangePassword(UserFilter userFilter, string newPassword);
     }
-    public class UserService
+    public class UserService : IUserService
     {
         private IUOW unitOfWork;
         public UserService(IUOW unitOfWork)

@@ -9,16 +9,15 @@ using Moneyger.Services;
 
 namespace Moneyger.Controllers.Authentication
 {
-    [Route("api/Authentication")]
-    [ApiController]
+    [Route("api/authentication")]
     public class AuthenticationController : ControllerBase
     {
         private IUserService userService;
-        public AuthenticationController(IUserService _userService)
+        public AuthenticationController(IUserService userService)
         {
-            this.userService = _userService;
+            this.userService = userService;
         }
-        [Route("Login"), HttpPost]
+        [Route("login"), HttpPost]
         public async Task<LoginResultDTO> Login([FromBody] LoginDTO loginDTO)
         {
             UserFilter userFilter = new UserFilter()
@@ -27,13 +26,18 @@ namespace Moneyger.Controllers.Authentication
                 Password = loginDTO.Password
             };
             User user = await this.userService.Login(userFilter);
-            return new LoginResultDTO()
+            if (user != null)
             {
-                Username = user.Username
-            };
+                return new LoginResultDTO()
+                {
+                    Username = user.Username
+                };
+            }
+            return null;
+            
         }
 
-        [Route("ChangePassword"), HttpPost]
+        [Route("change-password"), HttpPost]
         public async Task<bool> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
         {
             UserFilter userFilter = new UserFilter()

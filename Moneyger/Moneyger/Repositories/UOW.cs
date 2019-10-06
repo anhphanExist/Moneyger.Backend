@@ -1,4 +1,5 @@
-﻿using Moneyger.Repositories.Models;
+﻿using Moneyger.Common;
+using Moneyger.Repositories.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Repositories
 {
-    public interface IUOW
+    public interface IUOW : IServiceScoped
     {
         Task Begin();
         Task Commit();
@@ -24,19 +25,21 @@ namespace Moneyger.Repositories
             UserRepository = new UserRepository(this.wASContext);
         }
 
-        public Task Begin()
+        public async Task Begin()
         {
-            throw new NotImplementedException();
+            await wASContext.Database.BeginTransactionAsync();
         }
 
         public Task Commit()
         {
-            throw new NotImplementedException();
+            wASContext.Database.CommitTransaction();
+            return Task.CompletedTask;
         }
 
         public Task Rollback()
         {
-            throw new NotImplementedException();
+            wASContext.Database.RollbackTransaction();
+            return Task.CompletedTask;
         }
     }
 }
