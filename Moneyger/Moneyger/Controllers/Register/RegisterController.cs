@@ -26,8 +26,8 @@ namespace Moneyger.Controllers.Register
                 Username = registerUserDTO.Username,
                 Password = registerUserDTO.Password
             };
-            User existedUser = await userService.Get(userFilter);
-            if (existedUser != null)
+            User user = await userService.Create(userFilter);
+            if (user == null)
             {
                 return null;
             }

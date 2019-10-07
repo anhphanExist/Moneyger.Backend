@@ -12,7 +12,6 @@ namespace Moneyger.Services
     {
         Task<User> Login(UserFilter userFilter);
         Task<User> ChangePassword(UserFilter userFilter, string newPassword);
-        Task<User> Get(UserFilter userFilter);
         Task<User> Create(UserFilter userFilter);
     }
     public class UserService : IUserService
@@ -25,26 +24,21 @@ namespace Moneyger.Services
 
         public async Task<User> Login(UserFilter userFilter)
         {
-            User user = await Get(userFilter);
+            User user = await unitOfWork.UserRepository.Get(userFilter);
             return user;
         }
 
         public async Task<User> ChangePassword(UserFilter userFilter, string newPassword)
         {
-            User user = await Get(userFilter);
+            User user = await unitOfWork.UserRepository.Get(userFilter);
             user.Password = newPassword;
             await unitOfWork.UserRepository.Update(user);
             return user;
         }
 
-        public async Task<User> Get(UserFilter userFilter)
-        {
-            User user = await unitOfWork.UserRepository.Get(userFilter);
-            return user;
-        }
-
         public async Task<User> Create(UserFilter userFilter)
         {
+            User existedUser = await unitOfWork.UserRepository.Get(userFilter);
             User newUser = new User
             {
                 Id = Guid.NewGuid(),
