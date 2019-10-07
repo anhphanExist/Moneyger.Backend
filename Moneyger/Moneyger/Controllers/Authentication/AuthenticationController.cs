@@ -34,7 +34,6 @@ namespace Moneyger.Controllers.Authentication
                 };
             }
             return null;
-            
         }
 
         [Route("change-password"), HttpPost]
