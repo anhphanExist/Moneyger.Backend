@@ -18,7 +18,7 @@ namespace Moneyger.Controllers.Register
         {
             this.userService = userService;
         }
-        [Route("Signup"), HttpPost]
+        [Route("signup"), HttpPost]
         public async Task<RegisterResultDTO> Signup(RegisterDTO registerUserDTO)
         {
             User user = new User
