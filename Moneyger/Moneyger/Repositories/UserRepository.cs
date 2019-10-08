@@ -34,7 +34,7 @@ namespace Moneyger.Repositories
 
         public async Task<User> Get(UserFilter filter)
         {
-            IQueryable<UserDAO> users = wASContext.User;
+            IQueryable<UserDAO> users = wASContext.User.AsNoTracking();
             UserDAO userDAO = DynamicFilter(users, filter).FirstOrDefault();
             return new User
             {
@@ -46,7 +46,10 @@ namespace Moneyger.Repositories
 
         public async Task<User> Get(Guid Id)
         {
-            UserDAO user = wASContext.User.Where(u => u.Id.Equals(Id)).FirstOrDefault();
+            UserDAO user = wASContext.User
+                .Where(u => u.Id.Equals(Id))
+                .AsNoTracking()
+                .FirstOrDefault();
             return new User
             {
                 Id = user.Id,

@@ -12,7 +12,7 @@ namespace Moneyger.Services
     {
         Task<bool> Login(User user);
         Task<bool> Create(User user);
-        Task<bool> Update(User user);
+        Task<bool> Update(User user, string newPassword);
     }
     public class UserValidator : IUserValidator
     {
@@ -20,9 +20,9 @@ namespace Moneyger.Services
         {
             UserNotExisted,
             UserDuplicated, 
-            WrongPassword,
+            InvalidPassword,
             StringLimited,
-            StringEmpty 
+            StringEmpty
         }
 
         private IUOW unitOfWork;
@@ -34,7 +34,7 @@ namespace Moneyger.Services
         public async Task<bool> Login(User user)
         {
             bool isValid = true;
-            isValid &= ValidateUserStringLength(user);
+            isValid &= ValidateUsername(user);
             isValid &= await ValidateUserExisted(user);
             if (isValid)
                 isValid &= await ValidatePassword(user);
@@ -44,16 +44,20 @@ namespace Moneyger.Services
         public async Task<bool> Create(User user)
         {
             bool isValid = true;
-            isValid &= ValidateUserStringLength(user);
+            isValid &= ValidateUsername(user);
             isValid &= await ValidateUserNotDuplicated(user);
             return isValid;
         }
 
-        public async Task<bool> Update(User user)
+        public async Task<bool> Update(User user, string newPassword)
         {
             bool isValid = true;
-            isValid &= ValidateUserStringLength(user);
+            
+            isValid &= ValidateUsername(user);
             isValid &= await ValidateUserExisted(user);
+            if (isValid)
+                isValid &= await ValidatePassword(user);
+            isValid &= ValidateNewPassword(user, newPassword);
             return isValid;
         }
 
@@ -89,6 +93,16 @@ namespace Moneyger.Services
 
         private async Task<bool> ValidatePassword(User user)
         {
+            if (user.Password.Length <= 0)
+            {
+                user.AddError(nameof(User), nameof(User.Password), ErrorCode.StringEmpty);
+                return false;
+            }
+            else if (user.Password.Length > 500)
+            {
+                user.AddError(nameof(User), nameof(User.Password), ErrorCode.StringLimited);
+                return false;
+            }   
             UserFilter userFilter = new UserFilter
             {
                 Username = user.Username,
@@ -97,18 +111,44 @@ namespace Moneyger.Services
             int count = await unitOfWork.UserRepository.Count(userFilter);
             if (count == 0)
             {
-                user.AddError(nameof(User), nameof(User.Password), ErrorCode.WrongPassword);
+                user.AddError(nameof(User), nameof(User.Password), ErrorCode.InvalidPassword);
                 return false;
             }
             return true;
         }
 
-        private bool ValidateUserStringLength(User user)
+        private bool ValidateUsername(User user)
         {
-            if (!(0 < user.Username.Length && user.Username.Length < 500))
+            if (user.Username.Length <= 0)
+            {
+                user.AddError(nameof(User), nameof(User.Username), ErrorCode.StringEmpty);
                 return false;
-            if (!(0 < user.Password.Length && user.Password.Length < 500))
+            }
+            else if (user.Username.Length > 500)
+            {
+                user.AddError(nameof(User), nameof(User.Username), ErrorCode.StringLimited);
                 return false;
+            }
+            return true;
+        }
+
+        private bool ValidateNewPassword(User user, string newPassword)
+        {
+            if (newPassword == null)
+            {
+                user.AddError(nameof(User), nameof(newPassword), ErrorCode.InvalidPassword);
+                return true;
+            }
+            else if (newPassword.Length <= 0)
+            {
+                user.AddError(nameof(User), nameof(newPassword), ErrorCode.StringEmpty);
+                return false;
+            }
+            else if (newPassword.Length > 500)
+            {
+                user.AddError(nameof(User), nameof(newPassword), ErrorCode.StringLimited);
+                return false;
+            }
             return true;
         }
     }

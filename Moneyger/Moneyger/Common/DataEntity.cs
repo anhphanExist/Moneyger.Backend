@@ -29,7 +29,7 @@ namespace Moneyger.Common
         public void AddError(string className, string Key, Enum Value)
         {
             if (Errors == null) Errors = new List<string>();
-            Errors.Add(className + Key + Value.ToString());
+            Errors.Add(className + "." + Key + "." + Value.ToString());
         }
 
         public string GetErrorMessage()

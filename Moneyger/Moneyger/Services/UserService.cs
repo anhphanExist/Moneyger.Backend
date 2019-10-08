@@ -39,14 +39,21 @@ namespace Moneyger.Services
 
         public async Task<User> ChangePassword(User user, string newPassword)
         {
-            if (!await UserValidator.Update(user))
+            if (!await UserValidator.Update(user, newPassword))
                 return user;
-            
+
             using (UnitOfWork.Begin())
             {
                 try
                 {
+                    UserFilter filter = new UserFilter
+                    {
+                        Username = user.Username,
+                        Password = user.Password
+                    };
+                    user = await Get(filter);
                     user.Password = newPassword;
+                    
                     await UnitOfWork.UserRepository.Update(user);
                     await UnitOfWork.Commit();
                     return await Get(new UserFilter

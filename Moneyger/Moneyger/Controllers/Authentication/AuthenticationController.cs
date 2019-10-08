@@ -43,7 +43,7 @@ namespace Moneyger.Controllers.Authentication
                 Password = changePasswordDTO.Password
             };
             User result = await this.userService.ChangePassword(user, changePasswordDTO.NewPassword);
-            if (result.Errors.Count > 0)
+            if (result.Errors != null)
                 return new ChangePasswordResultDTO
                 {
                     Username = result.Username,
