@@ -6,10 +6,10 @@ namespace Moneyger.Repositories.Models
 {
     public partial class WASContext : DbContext
     {
-        public virtual DbSet<CategoryDAO> Category { get; set; }
-        public virtual DbSet<TransactionDAO> Transaction { get; set; }
-        public virtual DbSet<UserDAO> User { get; set; }
-        public virtual DbSet<WalletDAO> Wallet { get; set; }
+        public virtual DbSet<CategoryDAO> CategoryDAO { get; set; }
+        public virtual DbSet<TransactionDAO> TransactionDAO { get; set; }
+        public virtual DbSet<UserDAO> UserDAO { get; set; }
+        public virtual DbSet<WalletDAO> WalletDAO { get; set; }
 
         public WASContext(DbContextOptions<WASContext> options) : base(options)
         {

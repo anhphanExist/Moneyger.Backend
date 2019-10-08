@@ -12,17 +12,17 @@ namespace Moneyger.Repositories
         Task Begin();
         Task Commit();
         Task Rollback();
-        IUserRepository UserRepository { get; }
+        //IUserRepository UserRepository { get; }
     }
     public class UOW : IUOW
     {
         private WASContext wASContext;
-        public IUserRepository UserRepository { get; }
+        //public IUserRepository UserRepository { get; }
 
         public UOW(WASContext wASContext)
         {
             this.wASContext = wASContext;
-            UserRepository = new UserRepository(this.wASContext);
+            //UserRepository = new UserRepository(this.wASContext);
         }
 
         public async Task Begin()
