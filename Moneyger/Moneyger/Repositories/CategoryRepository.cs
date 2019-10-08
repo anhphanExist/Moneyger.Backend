@@ -1,4 +1,5 @@
-﻿using Moneyger.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Moneyger.Entities;
 using Moneyger.Repositories.Models;
 using System;
 using System.Collections.Generic;
@@ -13,39 +14,110 @@ namespace Moneyger.Repositories
         Task<bool> Create(Category category);
         Task<bool> Update(Category category);
         Task<bool> Delete(Guid Id);
-        Task<int> Count(TransactionFilter filter);
+        Task<int> Count(CategoryFilter filter);
         Task<List<Category>> List(CategoryFilter filter);
     }
     public class CategoryRepository : ICategoryRepository
     {
-        public Task<int> Count(TransactionFilter filter)
+        private WASContext wASContext;
+
+        public CategoryRepository(WASContext wASContext)
         {
-            throw new NotImplementedException();
+            this.wASContext = wASContext;
+        }
+        public async Task<int> Count(CategoryFilter filter)
+        {
+            IQueryable<CategoryDAO> categories = wASContext.Category;
+            categories = DynamicFilter(categories, filter);
+            return await categories.CountAsync();
         }
 
-        public Task<bool> Create(Category category)
+        public async Task<bool> Create(Category category)
         {
-            throw new NotImplementedException();
+            wASContext.Add(new CategoryDAO
+            {
+                Id = category.Id,
+                CX = category.CX,
+                Name = category.Name,
+                Type = category.Type,
+                Image = category.Image
+            });
+            wASContext.SaveChanges();
+            return true;
         }
 
-        public Task<bool> Delete(Guid Id)
+        public async Task<bool> Delete(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                CategoryDAO category = wASContext.Category.Where(c => c.Id == Id).Select(c => new CategoryDAO()
+                {
+
+                    Id = category.Id,
+                    CX = category.CX,
+                    Name = category.Name,
+                    Type = category.Type,
+                    Image = category.Image
+                }).FirstOrDefault();
+                wASContext.Category.Remove(category);
+                wASContext.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            return true;
         }
 
-        public Task<Category> Get(Guid Id)
+        public async Task<Category> Get(Guid Id)
         {
-            throw new NotImplementedException();
+            CategoryDAO category = wASContext.Category
+                .Where(c => c.Id.Equals(Id))
+                .AsNoTracking()
+                .FirstOrDefault();
+            return new Category
+            {
+                Id = category.Id,
+                CX = category.CX,
+                Name = category.Name,
+                Type = category.Type,
+                Image = category.Image
+            };
         }
 
-        public Task<List<Category>> List(CategoryFilter filter)
+        public async Task<List<Category>> List(CategoryFilter filter)
         {
-            throw new NotImplementedException();
+            IQueryable<CategoryDAO> query = wASContext.Category;
+            query = DynamicFilter(query, filter);
+            query = DynamicOrder(query, filter);
+            List<Category> list = query
+                .Select(category => new Category
+                {
+                    Id = category.Id,
+                    CX = category.CX,
+                    Name = category.Name,
+                    Type = category.Type,
+                    Image = category.Image
+                })
+                .ToList();
+            return list;
         }
 
-        public Task<bool> Update(Category category)
+        public async Task<bool> Update(Category category)
         {
-            throw new NotImplementedException();
+            wASContext.Category
+                .Where(u => u.Id.Equals(category.Id))
+                .UpdateFromQuery(u => new CategoryDAO
+                {
+                    Id = category.Id,
+                    CX = category.CX,
+                    Name = category.Name,
+                    Type = category.Type,
+                    Image = category.Image
+                });
+            wASContext.SaveChanges();
+            return true;
         }
 
         private IQueryable<CategoryDAO> DynamicFilter(IQueryable<CategoryDAO> query, CategoryFilter filter)
@@ -78,41 +150,39 @@ namespace Moneyger.Repositories
                 if (filter.Name.NotStartsWith != null)
                     query = query.Where(c => c.Name.StartsWith(filter.Name.NotStartsWith));
             }
-            
-
-
+  
             return query;
         }
 
-        private IQueryable<TransactionDAO> DynamicOrder(IQueryable<TransactionDAO> query, TransactionFilter filter)
+        private IQueryable<CategoryDAO> DynamicOrder(IQueryable<CategoryDAO> query, CategoryFilter filter)
         {
             switch (filter.OrderType)
             {
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case TransactionOrder.WalletId:
-                            query = query.OrderBy(g => g.WalletId);
-                            break;
-                        case TransactionOrder.CategoryId:
-                            query = query.OrderBy(g => g.CategoryId);
-                            break;
-                        case TransactionOrder.Id:
+                        case CategoryOrder.Id:
                             query = query.OrderBy(g => g.Id);
+                            break;
+                        case CategoryOrder.Name:
+                            query = query.OrderBy(g => g.Name);
+                            break;
+                        case CategoryOrder.Type:
+                            query = query.OrderBy(g => g.Type);
                             break;
                     }
                     break;
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case TransactionOrder.WalletId:
-                            query = query.OrderByDescending(g => g.WalletId);
-                            break;
-                        case TransactionOrder.CategoryId:
-                            query = query.OrderByDescending(g => g.CategoryId);
-                            break;
-                        case TransactionOrder.Id:
+                        case CategoryOrder.Id:
                             query = query.OrderByDescending(g => g.Id);
+                            break;
+                        case CategoryOrder.Name:
+                            query = query.OrderByDescending(g => g.Name);
+                            break;
+                        case CategoryOrder.Type:
+                            query = query.OrderByDescending(g => g.Type);
                             break;
                     }
                     break;

@@ -29,7 +29,7 @@ namespace Moneyger.Repositories
         }
         public async Task<int> Count(TransactionFilter filter)
         {
-            IQueryable<TransactionDAO> transactions = wASContext.TransactionDAO;
+            IQueryable<TransactionDAO> transactions = wASContext.Transaction;
             transactions = DynamicFilter(transactions, filter);
             return await transactions.CountAsync();
         }
@@ -54,7 +54,7 @@ namespace Moneyger.Repositories
         {
             try
             {
-                TransactionDAO transaction = wASContext.TransactionDAO.Where(t => t.Id == Id).Select(c => new TransactionDAO()
+                TransactionDAO transaction = wASContext.Transaction.Where(t => t.Id == Id).Select(c => new TransactionDAO()
                 {
                     
                     CX = transaction.CX,
@@ -64,7 +64,7 @@ namespace Moneyger.Repositories
                     Note = transaction.Note,
                     Date = transaction.Date
                 }).FirstOrDefault();
-                wASContext.TransactionDAO.Remove(transaction);
+                wASContext.Transaction.Remove(transaction);
                 wASContext.SaveChanges();
             }
             catch (Exception e)
@@ -77,7 +77,7 @@ namespace Moneyger.Repositories
 
         public async Task<Transaction> Get(Guid Id)
         {
-            TransactionDAO transaction = wASContext.TransactionDAO
+            TransactionDAO transaction = wASContext.Transaction
                 .Where(t => t.Id.Equals(Id))
                 .AsNoTracking()
                 .FirstOrDefault();
@@ -95,7 +95,7 @@ namespace Moneyger.Repositories
 
         public async Task<List<Transaction>> List(TransactionFilter filter)
         {
-            IQueryable<TransactionDAO> query = wASContext.TransactionDAO;
+            IQueryable<TransactionDAO> query = wASContext.Transaction;
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
             List<Transaction> list = query
@@ -115,7 +115,7 @@ namespace Moneyger.Repositories
 
         public async Task<bool> Update(Transaction transaction)
         {
-            wASContext.TransactionDAO
+            wASContext.Transaction
                 .Where(u => u.Id.Equals(transaction.Id))
                 .UpdateFromQuery(u => new TransactionDAO
                 {
