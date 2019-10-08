@@ -20,32 +20,42 @@ namespace Moneyger.Controllers.Authentication
         [Route("login"), HttpPost]
         public async Task<LoginResultDTO> Login([FromBody] LoginDTO loginDTO)
         {
-            UserFilter userFilter = new UserFilter()
+            User user = new User()
             {
                 Username = loginDTO.Username,
                 Password = loginDTO.Password
             };
-            User user = await this.userService.Login(userFilter);
-            if (user != null)
+            User res = await this.userService.Login(user);
+            
+            return new LoginResultDTO()
             {
-                return new LoginResultDTO()
-                {
-                    Username = user.Username
-                };
-            }
-            return null;
+                Username = res.Username,
+                Errors = res.Errors
+            };
         }
 
         [Route("change-password"), HttpPost]
-        public async Task<bool> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+        public async Task<ChangePasswordResultDTO> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
         {
-            UserFilter userFilter = new UserFilter()
+            User user = new User()
             {
                 Username = changePasswordDTO.Username,
                 Password = changePasswordDTO.Password
             };
-            User user = await this.userService.ChangePassword(userFilter, changePasswordDTO.NewPassword);
-            return user != null;
+            User result = await this.userService.ChangePassword(user, changePasswordDTO.NewPassword);
+            if (result.Errors.Count > 0)
+                return new ChangePasswordResultDTO
+                {
+                    Username = result.Username,
+                    Success = false,
+                    Errors = result.Errors
+                };
+            else
+                return new ChangePasswordResultDTO
+                {
+                    Username = result.Username,
+                    Success = true
+                };
         }
     }
 }

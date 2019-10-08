@@ -10,43 +10,83 @@ namespace Moneyger.Services
 {
     public interface IUserService : IServiceScoped
     {
-        Task<User> Login(UserFilter userFilter);
-        Task<User> ChangePassword(UserFilter userFilter, string newPassword);
-        Task<User> Create(UserFilter userFilter);
+        Task<User> Login(User user);
+        Task<User> ChangePassword(User user, string newPassword);
+        Task<User> Create(User user);
     }
     public class UserService : IUserService
     {
-        private IUOW unitOfWork;
-        public UserService(IUOW unitOfWork)
+        private IUOW UnitOfWork;
+        private IUserValidator UserValidator;
+        public UserService(IUOW UnitOfWork, IUserValidator UserValidator)
         {
-            this.unitOfWork = unitOfWork;
+            this.UnitOfWork = UnitOfWork;
+            this.UserValidator = UserValidator;
         }
 
-        public async Task<User> Login(UserFilter userFilter)
+        public async Task<User> Login(User user)
         {
-            User user = await unitOfWork.UserRepository.Get(userFilter);
-            return user;
-        }
+            if (!await UserValidator.Login(user))
+                return user;
 
-        public async Task<User> ChangePassword(UserFilter userFilter, string newPassword)
-        {
-            User user = await unitOfWork.UserRepository.Get(userFilter);
-            user.Password = newPassword;
-            await unitOfWork.UserRepository.Update(user);
-            return user;
-        }
-
-        public async Task<User> Create(UserFilter userFilter)
-        {
-            User existedUser = await unitOfWork.UserRepository.Get(userFilter);
-            User newUser = new User
+            UserFilter userFilter = new UserFilter
             {
-                Id = Guid.NewGuid(),
-                Username = userFilter.Username,
-                Password = userFilter.Password
+                Username = user.Username,
+                Password = user.Password
             };
-            await unitOfWork.UserRepository.Create(newUser);
-            return newUser;
+            return await UnitOfWork.UserRepository.Get(userFilter);
+        }
+
+        public async Task<User> ChangePassword(User user, string newPassword)
+        {
+            if (!await UserValidator.Update(user))
+                return user;
+            
+            using (UnitOfWork.Begin())
+            {
+                try
+                {
+                    user.Password = newPassword;
+                    await UnitOfWork.UserRepository.Update(user);
+                    await UnitOfWork.Commit();
+                    return await Get(new UserFilter
+                    {
+                        Username = user.Username,
+                        Password = newPassword
+                    });
+                }
+                catch (Exception e)
+                {
+                    await UnitOfWork.Rollback();
+                    user.AddError(nameof(UserValidator), nameof(User.Password), CommonEnum.ErrorCode.SystemError);
+                    return user;
+                }
+            }
+        }
+
+        public async Task<User> Get(UserFilter filter)
+        {
+            return await UnitOfWork.UserRepository.Get(filter);
+        }
+
+        public async Task<User> Get(Guid Id)
+        {
+            return await UnitOfWork.UserRepository.Get(Id);
+        }
+
+        public async Task<User> Create(User user)
+        {
+            if (!await UserValidator.Create(user))
+                return user;
+            return user;
+            //User newUser = new User
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Username = userFilter.Username,
+            //    Password = userFilter.Password
+            //};
+            //await UnitOfWork.UserRepository.Create(newUser);
+            //return newUser;
         }
     }
 }

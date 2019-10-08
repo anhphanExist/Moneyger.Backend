@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Moneyger.Controllers.Register
+namespace Moneyger.Controllers.Authentication
 {
-    public class RegisterUserDTO : DataDTO
+    public class ChangePasswordResultDTO : DataDTO
     {
         public string Username { get; set; }
-        public string Password { get; set; }
+        public bool Success { get; set; }
     }
 }

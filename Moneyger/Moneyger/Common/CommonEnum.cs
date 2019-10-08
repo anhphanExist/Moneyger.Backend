@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Common
 {
-    public class DataDTO
+    public static class CommonEnum
     {
-        public List<string> Errors { get; set; }
+        public enum ErrorCode
+        {
+            SystemError
+        }
     }
 }

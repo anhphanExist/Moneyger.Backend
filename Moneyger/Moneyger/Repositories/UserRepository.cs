@@ -1,4 +1,5 @@
-﻿using Moneyger.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using Moneyger.Common;
 using Moneyger.Entities;
 using Moneyger.Repositories.Models;
 using System;
@@ -10,7 +11,9 @@ namespace Moneyger.Repositories
 {
     public interface IUserRepository
     {
+        Task<int> Count(UserFilter filter);
         Task<User> Get(UserFilter filter);
+        Task<User> Get(Guid Id);
         Task<bool> Create(User user);
         Task<bool> Update(User user);
     }
@@ -22,29 +25,34 @@ namespace Moneyger.Repositories
             this.wASContext = wASContext;
         }
 
-        private IQueryable<UserDAO> DynamicFilter(IQueryable<UserDAO> query, UserFilter userFilter)
+        public async Task<int> Count(UserFilter filter)
         {
-            if (!string.IsNullOrEmpty(userFilter.Username))
-            {
-                query = query.Where(u => u.Username.Equals(userFilter.Username) && 
-                    u.Password.Equals(userFilter.Password));
-            }
-            return query;
+            IQueryable<UserDAO> users = wASContext.User;
+            users = DynamicFilter(users, filter);
+            return users.Count();
         }
 
         public async Task<User> Get(UserFilter filter)
         {
             IQueryable<UserDAO> users = wASContext.User;
             UserDAO userDAO = DynamicFilter(users, filter).FirstOrDefault();
-            if (userDAO == null)
-                return null;
-            else
-                return new User
-                {
-                    Id = userDAO.Id,
-                    Password = userDAO.Password,
-                    Username = userDAO.Username
-                };
+            return new User
+            {
+                Id = userDAO.Id,
+                Password = userDAO.Password,
+                Username = userDAO.Username
+            };
+        }
+
+        public async Task<User> Get(Guid Id)
+        {
+            UserDAO user = wASContext.User.Where(u => u.Id.Equals(Id)).FirstOrDefault();
+            return new User
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Password = user.Password
+            };
         }
 
         public async Task<bool> Create(User user)
@@ -69,6 +77,15 @@ namespace Moneyger.Repositories
                 });
             wASContext.SaveChanges();
             return true;
+        }
+
+        private IQueryable<UserDAO> DynamicFilter(IQueryable<UserDAO> query, UserFilter filter)
+        {
+            if (filter.Username != null)
+                query = query.Where(u => u.Username.Equals(filter.Username));
+            if (filter.Password != null)
+                query = query.Where(u => u.Password.Equals(filter.Password));
+            return query;
         }
     }
 }
