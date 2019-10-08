@@ -34,14 +34,17 @@ namespace Moneyger.Services
         public async Task<bool> Login(User user)
         {
             bool isValid = true;
+            isValid &= ValidateUserStringLength(user);
             isValid &= await ValidateUserExisted(user);
-            isValid &= await ValidatePassword(user);
+            if (isValid)
+                isValid &= await ValidatePassword(user);
             return isValid;
         }
 
         public async Task<bool> Create(User user)
         {
             bool isValid = true;
+            isValid &= ValidateUserStringLength(user);
             isValid &= await ValidateUserNotDuplicated(user);
             return isValid;
         }
@@ -49,6 +52,7 @@ namespace Moneyger.Services
         public async Task<bool> Update(User user)
         {
             bool isValid = true;
+            isValid &= ValidateUserStringLength(user);
             isValid &= await ValidateUserExisted(user);
             return isValid;
         }
@@ -96,6 +100,15 @@ namespace Moneyger.Services
                 user.AddError(nameof(User), nameof(User.Password), ErrorCode.WrongPassword);
                 return false;
             }
+            return true;
+        }
+
+        private bool ValidateUserStringLength(User user)
+        {
+            if (!(0 < user.Username.Length && user.Username.Length < 500))
+                return false;
+            if (!(0 < user.Password.Length && user.Password.Length < 500))
+                return false;
             return true;
         }
     }

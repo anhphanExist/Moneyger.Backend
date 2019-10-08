@@ -78,15 +78,27 @@ namespace Moneyger.Services
         {
             if (!await UserValidator.Create(user))
                 return user;
-            return user;
-            //User newUser = new User
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Username = userFilter.Username,
-            //    Password = userFilter.Password
-            //};
-            //await UnitOfWork.UserRepository.Create(newUser);
-            //return newUser;
+            
+            using (UnitOfWork.Begin())
+            {
+                try
+                {
+                    user.Id = Guid.NewGuid();
+                    await UnitOfWork.UserRepository.Create(user);
+                    await UnitOfWork.Commit();
+                    return await Get(new UserFilter
+                    {
+                        Username = user.Username,
+                        Password = user.Password
+                    });
+                }
+                catch (Exception e)
+                {
+                    await UnitOfWork.Rollback();
+                    user.AddError(nameof(UserValidator), nameof(User.Password), CommonEnum.ErrorCode.SystemError);
+                    return user;
+                }
+            }
         }
     }
 }

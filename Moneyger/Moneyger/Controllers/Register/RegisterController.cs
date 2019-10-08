@@ -19,21 +19,18 @@ namespace Moneyger.Controllers.Register
             this.userService = userService;
         }
         [Route("Signup"), HttpPost]
-        public async Task<RegisterResultDTO> Signup(RegisterUserDTO registerUserDTO)
+        public async Task<RegisterResultDTO> Signup(RegisterDTO registerUserDTO)
         {
-            UserFilter userFilter = new UserFilter
+            User user = new User
             {
                 Username = registerUserDTO.Username,
                 Password = registerUserDTO.Password
             };
-            User user = await userService.Create(userFilter);
-            if (user == null)
-            {
-                return null;
-            }
+            User res = await userService.Create(user);
             return new RegisterResultDTO
             {
-                Username = registerUserDTO.Username
+                Username = res.Username,
+                Errors = res.Errors
             };
         }
     }
