@@ -60,7 +60,7 @@ namespace Moneyger.Repositories
 
         public async Task<bool> Create(User user)
         {
-            wASContext.Add(new UserDAO
+            wASContext.User.Add(new UserDAO
             {
                 Id = user.Id,
                 Username = user.Username,

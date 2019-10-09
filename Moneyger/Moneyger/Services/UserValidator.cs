@@ -46,6 +46,7 @@ namespace Moneyger.Services
             bool isValid = true;
             isValid &= ValidateUsername(user);
             isValid &= await ValidateUserNotDuplicated(user);
+            isValid &= ValidateNewPassword(user, user.Password);
             return isValid;
         }
 
