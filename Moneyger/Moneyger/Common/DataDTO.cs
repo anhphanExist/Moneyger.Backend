@@ -7,7 +7,7 @@ namespace Moneyger.Common
 {
     public class DataDTO
     {
-        public Dictionary<string, string> Errors;
+        public List<string> Errors { get; set; }
     }
 
     public class FilterDTO
