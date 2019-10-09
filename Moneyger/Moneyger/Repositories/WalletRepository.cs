@@ -39,6 +39,11 @@ namespace Moneyger.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Transaction> Get(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<Transaction>> List(TransactionFilter filter)
         {
             throw new NotImplementedException();

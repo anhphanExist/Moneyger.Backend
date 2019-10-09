@@ -26,8 +26,7 @@ namespace Moneyger.Repositories.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,1.1")
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity<CategoryDAO>(entity =>
             {

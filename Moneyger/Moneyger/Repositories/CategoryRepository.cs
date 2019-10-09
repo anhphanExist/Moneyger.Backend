@@ -53,11 +53,11 @@ namespace Moneyger.Repositories
                 CategoryDAO category = wASContext.Category.Where(c => c.Id == Id).Select(c => new CategoryDAO()
                 {
 
-                    Id = category.Id,
-                    CX = category.CX,
-                    Name = category.Name,
-                    Type = category.Type,
-                    Image = category.Image
+                    Id = c.Id,
+                    CX = c.CX,
+                    Name = c.Name,
+                    Type = c.Type,
+                    Image = c.Image
                 }).FirstOrDefault();
                 wASContext.Category.Remove(category);
                 wASContext.SaveChanges();

@@ -54,15 +54,15 @@ namespace Moneyger.Repositories
         {
             try
             {
-                TransactionDAO transaction = wASContext.Transaction.Where(t => t.Id == Id).Select(c => new TransactionDAO()
+                TransactionDAO transaction = wASContext.Transaction.Where(t => t.Id == Id).Select(t => new TransactionDAO()
                 {
                     
-                    CX = transaction.CX,
-                    WalletId = transaction.WalletId,
-                    CategoryId = transaction.CategoryId,
-                    Amount = transaction.Amount,
-                    Note = transaction.Note,
-                    Date = transaction.Date
+                    CX = t.CX,
+                    WalletId = t.WalletId,
+                    CategoryId = t.CategoryId,
+                    Amount = t.Amount,
+                    Note = t.Note,
+                    Date = t.Date
                 }).FirstOrDefault();
                 wASContext.Transaction.Remove(transaction);
                 wASContext.SaveChanges();
