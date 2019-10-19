@@ -11,15 +11,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
     <PackageReference Include="PredicateBuilder" Version="1.0.0" />
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Services\" />
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="2.7.1" />
   </ItemGroup>
 
 </Project>
