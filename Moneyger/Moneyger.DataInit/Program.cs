@@ -21,6 +21,9 @@ namespace Moneyger.DataInit
                 .Options;
             WASContext = new WASContext(options);
             EntityFrameworkManager.ContextFactory = DbContext => WASContext;
+
+            DataInit dataInit = new DataInit(WASContext);
+            dataInit.Init();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Moneyger.Repositories.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Moneyger.Repositories.Models;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -26,37 +27,54 @@ namespace Moneyger.DataInit
         public bool Init()
         {
             Clean();
-            InitUser();
-            InitCategory();
-            InitWallet();
-            InitTransaction();
+            //InitUser();
+            //InitCategory();
+            //InitWallet();
+            //InitTransaction();
             wASContext.SaveChanges();
             return true;
         }
 
         private void InitTransaction()
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < walletInit.WalletCodes.Count; i++)
+            {
+                for (int j = 0; j < categoryInit.CategoryCodes.Count; j++)
+                {
+                    transactionInit.Init(walletInit.WalletCodes[i], categoryInit.CategoryCodes[j], 1);
+                }
+            }
+            
         }
 
         private void InitWallet()
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < userInit.UserCodes.Count; i++)
+            {
+                walletInit.Init(userInit.UserCodes[i], 3);
+            }
         }
 
         private void InitCategory()
         {
-            throw new NotImplementedException();
+            categoryInit.Init(10);
         }
 
         private void InitUser()
         {
-            
+            userInit.Init(2);
         }
 
         public void Clean()
-        {
-
+        { 
+            string command = string.Format(
+              "TRUNCATE" 
+                    + "\u0022" + "Transaction" + "\u0022" + ", "
+                    +"\u0022" + "Wallet" + "\u0022" + ", "
+                    +"\u0022" + "Category" + "\u0022" + ", "
+                    +"\u0022" + "User" + "\u0022" + " "
+                + "RESTART IDENTITY;");
+            var result = wASContext.Database.ExecuteSqlCommand(command);
         }
     }
 }
