@@ -10,7 +10,7 @@ namespace Moneyger.DataInit
         public List<string> UserCodes { get; private set; }
         public UserInit(WASContext wASContext) : base(wASContext)
         {
-
+            UserCodes = new List<string>();
         }
 
         public List<string> Init(int count = 1)
@@ -32,7 +32,7 @@ namespace Moneyger.DataInit
                 returnList.Add(code);
             }
 
-            UserCodes = returnList;
+            UserCodes.AddRange(returnList);
             return returnList;
         }
     }

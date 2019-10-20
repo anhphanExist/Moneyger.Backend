@@ -10,7 +10,7 @@ namespace Moneyger.DataInit
         public List<string> WalletCodes { get; private set; }
         public WalletInit(WASContext wASContext) : base(wASContext)
         {
-
+            WalletCodes = new List<string>();
         }
 
         public List<string> Init(string userId, int count = 1)
@@ -20,7 +20,7 @@ namespace Moneyger.DataInit
 
             for (int i = 0; i < count; i++)
             {
-                string code = baseCode + i.ToString();
+                string code = userId + "." + baseCode + i.ToString();
 
 
                 wASContext.Wallet.Add(new WalletDAO
@@ -33,7 +33,7 @@ namespace Moneyger.DataInit
                 returnList.Add(code);
             }
 
-            WalletCodes = returnList;
+            WalletCodes.AddRange(returnList);
             return returnList;
         }
     }

@@ -10,7 +10,7 @@ namespace Moneyger.DataInit
         public List<string> TransactionCodes { get; private set; }
         public TransactionInit(WASContext wASContext) : base(wASContext)
         {
-
+            TransactionCodes = new List<string>();
         }
 
         public List<string> Init(string walletId, string categoryId, int count = 1)
@@ -20,20 +20,20 @@ namespace Moneyger.DataInit
 
             for (int i = 0; i < count; i++)
             {
-                string code = baseCode + walletId + categoryId + i.ToString();
+                string code = categoryId + "." + walletId + "." + baseCode + i.ToString();
                 
                 wASContext.Transaction.Add(new TransactionDAO
                 {
                     Id = CreateGuid(code),
                     WalletId = CreateGuid(walletId),
                     CategoryId = CreateGuid(categoryId),
-                    Amount = i * 1000,
-                    Date = new DateTime(2000, i % 12, i % 30),
+                    Amount = i * 10000 + 10000,
+                    Date = new DateTime(2000, i % 12 + 1, i % 28 + 1),
                     Note = code,
                 });
                 returnList.Add(code);
             }
-            TransactionCodes = returnList;
+            TransactionCodes.AddRange(returnList);
             return returnList;
         }
     }

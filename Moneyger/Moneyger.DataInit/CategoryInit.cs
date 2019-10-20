@@ -7,10 +7,10 @@ namespace Moneyger.DataInit
 {
     public class CategoryInit : CommonInit
     {
-        public List<string> CategoryCodes { get; private set; }
+        public List<string> CategoryCodes { get ; private set; }
         public CategoryInit(WASContext wASContext) : base(wASContext)
         {
-
+            CategoryCodes = new List<string>();
         }
 
         public List<string> Init(int count = 1)
@@ -32,7 +32,7 @@ namespace Moneyger.DataInit
                 returnList.Add(code);
             }
 
-            CategoryCodes = returnList;
+            CategoryCodes.AddRange(returnList);
             return returnList;
         }
     }

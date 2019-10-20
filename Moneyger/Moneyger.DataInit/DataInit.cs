@@ -27,10 +27,10 @@ namespace Moneyger.DataInit
         public bool Init()
         {
             Clean();
-            //InitUser();
-            //InitCategory();
-            //InitWallet();
-            //InitTransaction();
+            InitUser();
+            InitCategory();
+            InitWallet();
+            InitTransaction();
             wASContext.SaveChanges();
             return true;
         }
@@ -41,7 +41,7 @@ namespace Moneyger.DataInit
             {
                 for (int j = 0; j < categoryInit.CategoryCodes.Count; j++)
                 {
-                    transactionInit.Init(walletInit.WalletCodes[i], categoryInit.CategoryCodes[j], 1);
+                    transactionInit.Init(walletInit.WalletCodes[i], categoryInit.CategoryCodes[j], 2);
                 }
             }
             
@@ -51,7 +51,7 @@ namespace Moneyger.DataInit
         {
             for (int i = 0; i < userInit.UserCodes.Count; i++)
             {
-                walletInit.Init(userInit.UserCodes[i], 3);
+                walletInit.Init(userInit.UserCodes[i], 1);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Moneyger.DataInit
 
         private void InitUser()
         {
-            userInit.Init(2);
+            userInit.Init(1);
         }
 
         public void Clean()
