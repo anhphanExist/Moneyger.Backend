@@ -76,15 +76,15 @@ namespace Moneyger
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
-                c.RouteTemplate = "api/APPS/swagger/{documentname}/swagger.json";
+                c.RouteTemplate = "api/Moneyger/swagger/{documentname}/swagger.json";
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/APPS/swagger/v1/swagger.json", "Application API");
-                c.RoutePrefix = "api/APPS/swagger";
+                c.SwaggerEndpoint("/api/Moneyger/swagger/v1/swagger.json", "Application API");
+                c.RoutePrefix = "api/Moneyger/swagger";
             });
 
             app.UseMvc();

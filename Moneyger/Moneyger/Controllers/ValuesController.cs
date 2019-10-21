@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Moneyger.Controllers
 {
+    public class Root
+    {
+        public const string Base = "api/Moneyger";
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase

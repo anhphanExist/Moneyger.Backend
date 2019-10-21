@@ -14,4 +14,9 @@ namespace Moneyger.Entities
         public DateTime Month { get; set; }
         public List<TransactionDayGroup> TransactionDayGroups { get; set; }
     }
+
+    public class TransactionMonthGroupFilter : FilterEntity
+    {
+        public DateTimeFilter Month { get; set; }
+    }
 }

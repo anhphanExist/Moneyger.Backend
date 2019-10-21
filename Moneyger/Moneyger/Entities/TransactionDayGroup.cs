@@ -12,4 +12,9 @@ namespace Moneyger.Entities
         public decimal TotalAmount { get; set; }
         public List<Transaction> Transactions { get; set; }
     }
+
+    public class TransactionDayGroupFilter : FilterEntity
+    {
+        public DateTimeFilter Date { get; set; }
+    }
 }

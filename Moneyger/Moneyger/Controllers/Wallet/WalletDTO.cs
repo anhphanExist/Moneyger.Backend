@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Moneyger.Controllers.Register
+namespace Moneyger.Controllers.Wallet
 {
-    public class RegisterResultDTO : DataDTO
+    public class WalletDTO : DataDTO
     {
-        public string Username { get; set; }
     }
 }

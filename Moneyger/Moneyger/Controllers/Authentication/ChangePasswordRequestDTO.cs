@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Controllers.Authentication
 {
-    public class ChangePasswordResultDTO : DataDTO
+    public class ChangePasswordRequestDTO : DataDTO
     {
         public string Username { get; set; }
-        public bool Success { get; set; }
+        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 }

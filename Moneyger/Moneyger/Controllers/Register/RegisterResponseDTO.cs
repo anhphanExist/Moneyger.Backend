@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Controllers.Register
 {
-    public class RegisterDTO : DataDTO
+    public class RegisterResponseDTO : DataDTO
     {
         public string Username { get; set; }
-        public string Password { get; set; }
     }
 }

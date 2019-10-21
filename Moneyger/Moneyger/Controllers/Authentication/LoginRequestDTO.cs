@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Controllers.Authentication
 {
-    public class LoginResultDTO : DataDTO
+    public class LoginRequestDTO : DataDTO
     {
         public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Moneyger.Controllers.Authentication
             this.userService = userService;
         }
         [Route("login"), HttpPost]
-        public async Task<LoginResultDTO> Login([FromBody] LoginDTO loginDTO)
+        public async Task<LoginResponseDTO> Login([FromBody] LoginRequestDTO loginDTO)
         {
             User user = new User()
             {
@@ -27,7 +27,7 @@ namespace Moneyger.Controllers.Authentication
             };
             User res = await this.userService.Login(user);
             
-            return new LoginResultDTO()
+            return new LoginResponseDTO()
             {
                 Username = res.Username,
                 Errors = res.Errors
@@ -35,7 +35,7 @@ namespace Moneyger.Controllers.Authentication
         }
 
         [Route("change-password"), HttpPost]
-        public async Task<ChangePasswordResultDTO> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+        public async Task<ChangePasswordResponseDTO> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {
             User user = new User()
             {
@@ -44,14 +44,14 @@ namespace Moneyger.Controllers.Authentication
             };
             User result = await this.userService.ChangePassword(user, changePasswordDTO.NewPassword);
             if (result.Errors != null)
-                return new ChangePasswordResultDTO
+                return new ChangePasswordResponseDTO
                 {
                     Username = result.Username,
                     Success = false,
                     Errors = result.Errors
                 };
             else
-                return new ChangePasswordResultDTO
+                return new ChangePasswordResponseDTO
                 {
                     Username = result.Username,
                     Success = true
