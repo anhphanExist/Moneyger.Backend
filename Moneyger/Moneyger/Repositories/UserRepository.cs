@@ -29,7 +29,7 @@ namespace Moneyger.Repositories
         {
             IQueryable<UserDAO> users = wASContext.User;
             users = DynamicFilter(users, filter);
-            return users.Count();
+            return await users.CountAsync();
         }
 
         public async Task<User> Get(UserFilter filter)
@@ -66,7 +66,7 @@ namespace Moneyger.Repositories
                 Username = user.Username,
                 Password = user.Password
             });
-            wASContext.SaveChanges();
+            await wASContext.SaveChangesAsync();
             return true;
         }
 
@@ -78,12 +78,14 @@ namespace Moneyger.Repositories
                 {
                     Password = user.Password
                 });
-            wASContext.SaveChanges();
+            await wASContext.SaveChangesAsync();
             return true;
         }
 
         private IQueryable<UserDAO> DynamicFilter(IQueryable<UserDAO> query, UserFilter filter)
         {
+            if (filter == null)
+                return query.Where(q => 1 == 0);
             if (filter.Username != null)
                 query = query.Where(u => u.Username.Equals(filter.Username));
             if (filter.Password != null)

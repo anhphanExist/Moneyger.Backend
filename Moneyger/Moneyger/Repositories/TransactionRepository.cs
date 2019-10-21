@@ -46,32 +46,23 @@ namespace Moneyger.Repositories
                 Note = transaction.Note,
                 Date = transaction.Date
             });
-            wASContext.SaveChanges();
+            await wASContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> Delete(Guid Id)
         {
+            TransactionDAO transactionDAO = wASContext.Transaction.Where(t => t.Id.Equals(Id)).FirstOrDefault();
             try
             {
-                TransactionDAO transaction = wASContext.Transaction.Where(t => t.Id == Id).Select(t => new TransactionDAO()
-                {
-                    
-                    CX = t.CX,
-                    WalletId = t.WalletId,
-                    CategoryId = t.CategoryId,
-                    Amount = t.Amount,
-                    Note = t.Note,
-                    Date = t.Date
-                }).FirstOrDefault();
-                wASContext.Transaction.Remove(transaction);
-                wASContext.SaveChanges();
-            }
-            catch (Exception e)
+                wASContext.Transaction.Remove(transactionDAO);
+                await wASContext.SaveChangesAsync();
+            } catch
             {
-                Console.WriteLine(e);
-                return false;
+                wASContext.Transaction.Update(transactionDAO);
+                await wASContext.SaveChangesAsync();
             }
+
             return true;
         }
 
@@ -98,9 +89,8 @@ namespace Moneyger.Repositories
             IQueryable<TransactionDAO> query = wASContext.Transaction;
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
-            List<Transaction> list = query
-                .Select(transaction => new Transaction
-                {
+            List<Transaction> list = await query.Select(transaction => new Transaction()
+            {
                     Id = transaction.Id,
                     CX = transaction.CX,
                     WalletId = transaction.WalletId,
@@ -109,7 +99,7 @@ namespace Moneyger.Repositories
                     Note = transaction.Note,
                     Date = transaction.Date
                 })
-                .ToList();
+                .ToListAsync();
             return list;
         }
 
@@ -126,7 +116,7 @@ namespace Moneyger.Repositories
                     Note = transaction.Note,
                     Date = transaction.Date
                 });
-            wASContext.SaveChanges();
+            await wASContext.SaveChangesAsync();
             return true;
         }
 
@@ -134,22 +124,12 @@ namespace Moneyger.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            if (filter.CategoryId != null)
-            {
-                if (filter.CategoryId.Equal != null)
-                    query = query.Where(q => q.CategoryId.Equals(filter.CategoryId.Equal));
-                if (filter.CategoryId.NotEqual != null)
-                    query = query.Where(q => q.CategoryId.Equals(filter.CategoryId.NotEqual));
-                
-            }
-            if (filter.WalletId != null)
-            {
-                if (filter.WalletId.Equal != null)
-                    query = query.Where(q => q.WalletId.Equals(filter.WalletId.Equal));
-                if (filter.WalletId.NotEqual != null)
-                    query = query.Where(q => q.WalletId.Equals(filter.WalletId.NotEqual));
-               
-            }
+            query = query.Where(q => q.WalletId.Equals(filter.WalletId));
+            query = query.Where(q => q.CategoryId.Equals(filter.CategoryId));
+            if (filter.Id != null)
+                query = query.Where(q => q.Id, filter.Id);
+            if (filter.Date != null)
+                query = query.Where(q => q.Date, filter.Date);
 
             return query;
         }
