@@ -16,7 +16,9 @@ namespace Moneyger.Entities
     }
     public class WalletFilter : FilterEntity
     {
+        public GuidFilter Id { get; set; }
         public StringFilter Name { get; set; }
+        public DecimalFilter Balance { get; set; }
         public GuidFilter UserId { get; set; }
         public WalletOrder OrderBy { get; set; }
         public WalletFilter() : base()
@@ -28,6 +30,6 @@ namespace Moneyger.Entities
     public enum WalletOrder
     {
         Name,
-        UsserId
+        Balance
     }
 }

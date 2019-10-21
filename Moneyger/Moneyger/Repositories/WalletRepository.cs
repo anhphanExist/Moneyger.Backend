@@ -1,4 +1,5 @@
-﻿using Moneyger.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using Moneyger.Common;
 using Moneyger.Entities;
 using Moneyger.Repositories.Models;
 using System;
@@ -11,47 +12,180 @@ namespace Moneyger.Repositories
     public interface IWalletRepository
     {
         Task<Wallet> Get(WalletFilter filter);
+        Task<Wallet> Get(Guid Id);
         Task<bool> Create(Wallet wallet);
         Task<bool> Update(Wallet wallet);
-        Task<bool> Delete(Guid Id);
+        Task<bool> Delete(Wallet wallet);
         Task<int> Count(WalletFilter filter);
         Task<List<Wallet>> List(WalletFilter filter);
     }
-    public class WalletRepository : ITransactionRepository
+    public class WalletRepository : IWalletRepository
     {
-        public Task<int> Count(TransactionFilter filter)
+        private WASContext wASContext;
+        public WalletRepository(WASContext wASContext)
         {
-            throw new NotImplementedException();
+            this.wASContext = wASContext;
+        }
+        public async Task<int> Count(WalletFilter filter)
+        {
+            IQueryable<WalletDAO> walletDAOs = wASContext.Wallet;
+            walletDAOs = DynamicFilter(walletDAOs, filter);
+            return await walletDAOs.CountAsync();
         }
 
-        public Task<bool> Create(Transaction transaction)
+        public async Task<bool> Create(Wallet wallet)
         {
-            throw new NotImplementedException();
+            WalletDAO walletDAO = await wASContext.Wallet.Where(w => w.Id == wallet.Id).FirstOrDefaultAsync();
+            if( walletDAO == null)
+            {
+                walletDAO = new WalletDAO()
+                {
+                    Id = wallet.Id,
+                    Name = wallet.Name,
+                    Balance = wallet.Balance,
+                    UserId = wallet.UserId
+                };
+                await wASContext.Wallet.AddAsync(walletDAO);
+            }
+            else
+            {
+                walletDAO.Name = wallet.Name;
+                walletDAO.Balance = wallet.Balance;
+                walletDAO.UserId = wallet.UserId;
+            }
+            await wASContext.SaveChangesAsync();
+            return true;
         }
 
-        public Task<bool> Delete(Guid Id)
+        public async Task<bool> Delete(Wallet wallet)
         {
-            throw new NotImplementedException();
+            WalletDAO walletDAO = wASContext.Wallet.Where(w => w.Id.Equals(wallet.Id)).FirstOrDefault();
+            try
+            {
+                wASContext.Wallet.Remove(walletDAO);
+                await wASContext.SaveChangesAsync();
+            }
+            catch
+            {
+                wASContext.Wallet.Update(walletDAO);
+                await wASContext.SaveChangesAsync();
+            }
+            return true;
         }
 
-        public Task<Transaction> Get(TransactionFilter filter)
+        public async Task<Wallet> Get(WalletFilter filter)
         {
-            throw new NotImplementedException();
+            IQueryable<WalletDAO> wallets =  wASContext.Wallet.AsNoTracking();
+            WalletDAO walletDAO = DynamicFilter(wallets, filter).FirstOrDefault();
+            return new Wallet()
+            {
+                Id = walletDAO.Id,
+                Name = walletDAO.Name,
+                Balance = walletDAO.Balance,
+                UserId = walletDAO.UserId
+            };
         }
 
-        public Task<Transaction> Get(Guid Id)
+        public async Task<Wallet> Get(Guid Id)
         {
-            throw new NotImplementedException();
+            WalletDAO walletDAO = wASContext.Wallet
+                .Where(w => w.Id.Equals(Id))
+                .AsNoTracking()
+                .FirstOrDefault();
+            return new Wallet()
+            {
+                Id = walletDAO.Id,
+                Name = walletDAO.Name,
+                Balance = walletDAO.Balance,
+                UserId = walletDAO.UserId
+            };
         }
 
-        public Task<List<Transaction>> List(TransactionFilter filter)
+        public async Task<List<Wallet>> List(WalletFilter filter)
         {
-            throw new NotImplementedException();
+            if (filter == null) return new List <Wallet>();
+            IQueryable<WalletDAO> query = wASContext.Wallet;
+            query = DynamicFilter(query, filter);
+            query = DynamicOrder(query, filter);
+            List<Wallet> list = await query.Select(q => new Wallet()
+            {
+                Id = q.Id,
+                Name = q.Name,
+                Balance = q.Balance,
+                UserId = q.UserId
+            })
+            .ToListAsync();
+            return list;
         }
 
-        public Task<bool> Update(Transaction transaction)
+        public async Task<bool> Update(Wallet wallet)
         {
-            throw new NotImplementedException();
+            await wASContext.Wallet.Where(w => w.Id.Equals(wallet.Id)).UpdateFromQueryAsync(w => new WalletDAO
+            {
+                Id = wallet.Id,
+                Name = wallet.Name,
+                Balance = wallet.Balance,
+                UserId = wallet.UserId
+            });
+            await wASContext.SaveChangesAsync();
+            return true;
         }
+
+        private IQueryable<WalletDAO> DynamicFilter(IQueryable<WalletDAO> query, WalletFilter filter)
+        {
+            if(filter == null)
+                return query.Where(q => 1 == 0);
+            query = query.Where(q => q.UserId.Equals(filter.UserId));
+            if (filter.Id != null)
+                query = query.Where(q => q.Id, filter.Id);
+            if (filter.Name != null)
+                query = query.Where(q => q.Name, filter.Name);
+            if (filter.Balance != null)
+                query = query.Where(q => q.Balance, filter.Balance);
+            
+            return query;
+        }
+
+        private IQueryable<WalletDAO> DynamicOrder(IQueryable<WalletDAO> query, WalletFilter filter)
+        {
+            switch (filter.OrderType)
+            {
+                case OrderType.ASC:
+                    switch (filter.OrderBy)
+                    {
+                        case WalletOrder.Name:
+                            query = query.OrderBy(q => q.Name);
+                            break;
+                        case WalletOrder.Balance:
+                            query = query.OrderBy(q => q.Balance);
+                            break;
+                        default:
+                            query = query.OrderBy(q => q.CX);
+                            break;
+                    }
+                    break;
+                case OrderType.DESC:
+                    switch (filter.OrderBy)
+                    {
+                        case WalletOrder.Name:
+                            query = query.OrderByDescending(q => q.Name);
+                            break;
+                        case WalletOrder.Balance:
+                            query = query.OrderByDescending(q => q.Balance);
+                            break;
+                        default:
+                            query = query.OrderByDescending(e => e.CX);
+                            break;
+                    }
+                    break;
+                default:
+                    query = query.OrderBy(q => q.CX);
+                    break;
+            }
+            return query.Skip(filter.Skip).Take(filter.Take);
+        }
+
+
     }
 }
+

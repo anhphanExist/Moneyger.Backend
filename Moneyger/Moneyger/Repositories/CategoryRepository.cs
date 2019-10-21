@@ -11,9 +11,6 @@ namespace Moneyger.Repositories
     public interface ICategoryRepository
     {
         Task<Category> Get(Guid Id);
-        Task<bool> Create(Category category);
-        Task<bool> Update(Category category);
-        Task<bool> Delete(Guid Id);
         Task<int> Count(CategoryFilter filter);
         Task<List<Category>> List(CategoryFilter filter);
     }
@@ -32,7 +29,7 @@ namespace Moneyger.Repositories
             return await categories.CountAsync();
         }
 
-        public async Task<bool> Create(Category category)
+        /*public async Task<bool> Create(Category category)
         {
             wASContext.Add(new CategoryDAO
             {
@@ -42,11 +39,11 @@ namespace Moneyger.Repositories
                 Type = category.Type,
                 Image = category.Image
             });
-            wASContext.SaveChanges();
+            wASContext.SaveChangesAsync();
             return true;
-        }
+        }*/
 
-        public async Task<bool> Delete(Guid Id)
+        /*public async Task<bool> Delete(Guid Id)
         {
             try
             {
@@ -60,7 +57,7 @@ namespace Moneyger.Repositories
                     Image = c.Image
                 }).FirstOrDefault();
                 wASContext.Category.Remove(category);
-                wASContext.SaveChanges();
+                wASContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -68,7 +65,7 @@ namespace Moneyger.Repositories
                 return false;
             }
             return true;
-        }
+        }*/
 
         public async Task<Category> Get(Guid Id)
         {
@@ -91,20 +88,19 @@ namespace Moneyger.Repositories
             IQueryable<CategoryDAO> query = wASContext.Category;
             query = DynamicFilter(query, filter);
             query = DynamicOrder(query, filter);
-            List<Category> list = query
-                .Select(category => new Category
+            List<Category> list = await query.Select(q => new Category()
                 {
-                    Id = category.Id,
-                    CX = category.CX,
-                    Name = category.Name,
-                    Type = category.Type,
-                    Image = category.Image
+                    Id = q.Id,
+                    CX = q.CX,
+                    Name = q.Name,
+                    Type = q.Type,
+                    Image = q.Image
                 })
-                .ToList();
+                .ToListAsync();
             return list;
         }
 
-        public async Task<bool> Update(Category category)
+        /*public async Task<bool> Update(Category category)
         {
             wASContext.Category
                 .Where(u => u.Id.Equals(category.Id))
@@ -118,7 +114,7 @@ namespace Moneyger.Repositories
                 });
             wASContext.SaveChanges();
             return true;
-        }
+        }*/
 
         private IQueryable<CategoryDAO> DynamicFilter(IQueryable<CategoryDAO> query, CategoryFilter filter)
         {
@@ -161,33 +157,33 @@ namespace Moneyger.Repositories
                 case OrderType.ASC:
                     switch (filter.OrderBy)
                     {
-                        case CategoryOrder.Id:
-                            query = query.OrderBy(g => g.Id);
-                            break;
                         case CategoryOrder.Name:
                             query = query.OrderBy(g => g.Name);
                             break;
                         case CategoryOrder.Type:
                             query = query.OrderBy(g => g.Type);
                             break;
+                        default:
+                            query = query.OrderBy(e => e.CX);
+                            break;
                     }
                     break;
                 case OrderType.DESC:
                     switch (filter.OrderBy)
                     {
-                        case CategoryOrder.Id:
-                            query = query.OrderByDescending(g => g.Id);
-                            break;
                         case CategoryOrder.Name:
                             query = query.OrderByDescending(g => g.Name);
                             break;
                         case CategoryOrder.Type:
                             query = query.OrderByDescending(g => g.Type);
                             break;
+                        default:
+                            query = query.OrderByDescending(e => e.CX);
+                            break;
                     }
                     break;
                 default:
-                    query = query.OrderBy(e => e.Id);
+                    query = query.OrderBy(e => e.CX);
                     break;
             }
             return query.Skip(filter.Skip).Take(filter.Take);

@@ -23,6 +23,7 @@ namespace Moneyger.Entities
         public GuidFilter Id { get; set; }
         public GuidFilter WalletId { get; set; }
         public GuidFilter CategoryId { get; set; }
+        public DateTimeFilter Date { get; set; }
         public TransactionOrder OrderBy { get; set; }
         public TransactionFilter() : base()
         {
