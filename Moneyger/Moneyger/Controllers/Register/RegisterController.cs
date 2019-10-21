@@ -34,6 +34,10 @@ namespace Moneyger.Controllers.Register
             };
         }
 
-
+        [Route("update"), HttpPost]
+        public async Task<RegisterResponseDTO> Update(RegisterUpdateRequestDTO registerUpdateRequestDTO)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
