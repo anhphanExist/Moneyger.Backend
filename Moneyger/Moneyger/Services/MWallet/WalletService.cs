@@ -106,13 +106,11 @@ namespace Moneyger.Services.MWallet
                 WalletFilter sourceWalletFilter = new WalletFilter
                 {
                     UserId = new GuidFilter { Equal = transferWalletTuple.Item1.UserId },
-                    Balance = new DecimalFilter { Equal = transferWalletTuple.Item1.Balance },
                     Name = new StringFilter { Equal = transferWalletTuple.Item1.Name }
                 };
                 WalletFilter destinationWalletFilter = new WalletFilter
                 {
                     UserId = new GuidFilter { Equal = transferWalletTuple.Item2.UserId },
-                    Balance = new DecimalFilter { Equal = transferWalletTuple.Item2.Balance },
                     Name = new StringFilter { Equal = transferWalletTuple.Item2.Name }
                 };
 

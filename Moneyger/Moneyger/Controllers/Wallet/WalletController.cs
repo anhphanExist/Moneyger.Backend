@@ -115,11 +115,13 @@ namespace Moneyger.Controllers.Wallet
             // Tao 2 wallet BO de gui cho Service xu ly Transfer
             Entities.Wallet sourceWallet = new Entities.Wallet
             {
-                Name = walletTransferRequestDTO.SourceWalletName
+                Name = walletTransferRequestDTO.SourceWalletName,
+                UserId = currentUserId
             };
             Entities.Wallet destWallet = new Entities.Wallet
             {
-                Name = walletTransferRequestDTO.DestWalletName
+                Name = walletTransferRequestDTO.DestWalletName,
+                UserId = currentUserId
             };
             Tuple<Entities.Wallet, Entities.Wallet> res = await walletService.Transfer(
                 Tuple.Create(sourceWallet, destWallet), 

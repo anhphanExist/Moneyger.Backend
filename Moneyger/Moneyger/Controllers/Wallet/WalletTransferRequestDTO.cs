@@ -5,7 +5,6 @@ namespace Moneyger.Controllers.Wallet
 {
     public class WalletTransferRequestDTO : DataDTO
     {
-        public Guid UserId { get; set; }
         public string SourceWalletName { get; set; }
         public string DestWalletName { get; set; }
         public decimal Amount { get; set; }
