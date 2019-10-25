@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moneyger.Entities;
@@ -18,6 +19,8 @@ namespace Moneyger.Controllers.Register
         {
             this.userService = userService;
         }
+
+        [AllowAnonymous]
         [Route("signup"), HttpPost]
         public async Task<RegisterResponseDTO> Signup(RegisterRequestDTO registerUserDTO)
         {

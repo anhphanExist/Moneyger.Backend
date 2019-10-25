@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moneyger.Entities;
@@ -17,6 +18,8 @@ namespace Moneyger.Controllers.Authentication
         {
             this.userService = userService;
         }
+
+        [AllowAnonymous]
         [Route("login"), HttpPost]
         public async Task<LoginResponseDTO> Login([FromBody] LoginRequestDTO loginDTO)
         {
@@ -34,6 +37,7 @@ namespace Moneyger.Controllers.Authentication
             };
         }
 
+        [Authorize]
         [Route("change-password"), HttpPost]
         public async Task<ChangePasswordResponseDTO> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace Moneyger.Controllers.Wallet
         public const string Transfer = Default + "/transfer";
     }
 
+    [Authorize]
     public class WalletController : ControllerBase
     {
         public WalletController()
