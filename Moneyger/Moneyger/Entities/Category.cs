@@ -11,7 +11,7 @@ namespace Moneyger.Entities
         public Guid Id { get; set; }
         public long CX { get; set; }
         public string Name { get; set; }
-        public bool Type { get; set; }
+        public CategoryType Type { get; set; }
         public byte[] Image { get; set; }
     }
     public class CategoryFilter : FilterEntity
@@ -31,6 +31,12 @@ namespace Moneyger.Entities
         CX,
         Name,
         Type
+    }
+
+    public enum CategoryType
+    {
+        Outflow,
+        Inflow
     }
 
     /*[Flags]

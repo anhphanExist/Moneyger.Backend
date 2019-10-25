@@ -18,6 +18,22 @@ namespace Moneyger.DataInit
             List<string> returnList = new List<string>();
             string baseCode = "Category";
 
+            wASContext.Category.Add(new CategoryDAO
+            {
+                Id = CreateGuid("Wallet Transfer Source"),
+                Type = false,
+                Name = "Wallet Transfer",
+            });
+            returnList.Add("Wallet Transfer Source");
+            wASContext.Category.Add(new CategoryDAO
+            {
+                Id = CreateGuid("Wallet Transfer Destination"),
+                Type = true,
+                Name = "Wallet Transfer"
+            });
+            returnList.Add("Wallet Transfer Destination");
+
+
             for (int i = 0; i < count; i++)
             {
                 string code = baseCode + i.ToString();

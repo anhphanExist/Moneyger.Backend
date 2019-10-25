@@ -8,7 +8,7 @@ namespace Moneyger.Services.MTransactionDayGroup
 {
     public interface ITransactionDayGroupService
     {
-        Task<List<>>
+        //Task<List<>>
     }
     public class TransactionDayGroupService
     {
