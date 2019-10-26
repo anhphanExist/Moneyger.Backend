@@ -24,21 +24,21 @@ namespace Moneyger.Services.MCategory
 
         public async Task<int> Count(CategoryFilter filter)
         {
-            int count = await UOW.categoryRepository.Count(filter);
+            int count = await UOW.CategoryRepository.Count(filter);
             return count;
         }
 
         public async Task<Category> Get(Guid Id)
         {
             if (Id == Guid.Empty) return null;
-            Category categories = await UOW.categoryRepository.Get(Id);
+            Category categories = await UOW.CategoryRepository.Get(Id);
             if (categories == null) return null;
             return categories;
         }
 
         public async Task<List<Category>> List(CategoryFilter filter)
         {
-            List<Category> list = await UOW.categoryRepository.List(filter);
+            List<Category> list = await UOW.CategoryRepository.List(filter);
             return list;
         }
     }

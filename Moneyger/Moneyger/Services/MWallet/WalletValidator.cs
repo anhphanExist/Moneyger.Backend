@@ -13,6 +13,7 @@ namespace Moneyger.Services.MWallet
         Task<bool> Create(Wallet wallet);
         Task<bool> Update(Wallet wallet, string newName);
         Task<bool> Delete(Wallet wallet);
+        Task<bool> Transfer(Tuple<Wallet, Wallet> transferWalletTuple);
     }
     public class WalletValidator : IWalletValidator
     {
@@ -50,6 +51,16 @@ namespace Moneyger.Services.MWallet
             isValid &= ValidateName(wallet);
             isValid &= await ValidateExistedWallet(wallet);
             isValid &= ValidateNewWalletName(wallet, newName);
+            return isValid;
+        }
+
+        public async Task<bool> Transfer(Tuple<Wallet, Wallet> transferWalletTuple)
+        {
+            bool isValid = true;
+            isValid &= ValidateName(transferWalletTuple.Item1);
+            isValid &= ValidateName(transferWalletTuple.Item2);
+            isValid &= await ValidateExistedWallet(transferWalletTuple.Item1);
+            isValid &= await ValidateExistedWallet(transferWalletTuple.Item2);
             return isValid;
         }
 

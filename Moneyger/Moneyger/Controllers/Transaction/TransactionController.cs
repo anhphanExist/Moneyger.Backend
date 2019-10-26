@@ -16,8 +16,7 @@ namespace Moneyger.Controllers.Transaction
         public const string GetTransactionMonthGroup = Default + "/get-transaction-month-group";
     }
 
-    [Authorize]
-    public class TransactionController : ControllerBase
+    public class TransactionController : ApiController
     {
         public TransactionController()
         {

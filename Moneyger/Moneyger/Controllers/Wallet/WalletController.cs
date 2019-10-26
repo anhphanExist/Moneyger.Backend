@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moneyger.Common;
+using Moneyger.Entities;
+using Moneyger.Services.MWallet;
 
 namespace Moneyger.Controllers.Wallet
 {
@@ -18,42 +24,121 @@ namespace Moneyger.Controllers.Wallet
         public const string Transfer = Default + "/transfer";
     }
 
-    [Authorize]
-    public class WalletController : ControllerBase
+    
+    public class WalletController : ApiController
     {
-        public WalletController()
+        private IWalletService walletService;
+        public WalletController(IWalletService walletService)
         {
-
+            this.walletService = walletService;
         }
 
         [Route(WalletRoute.List), HttpPost]
-        public async Task<List<WalletDTO>> List([FromBody] WalletListRequestDTO walletListRequestDTO)
+        public async Task<List<WalletDTO>> List()
         {
-            throw new NotImplementedException();
+            WalletFilter walletFilter = new WalletFilter()
+            {
+                UserId = new GuidFilter { Equal = currentUserId }
+            };
+            List<Entities.Wallet> wallets = await walletService.List(walletFilter);
+            List<WalletDTO> walletDTOs = new List<WalletDTO>();
+            wallets.ForEach(w => walletDTOs.Add(new WalletDTO
+            {
+                UserId = w.UserId,
+                Name = w.Name,
+                Balance = w.Balance,
+                Errors = w.Errors
+            }));
+            return walletDTOs;
         }
 
         [Route(WalletRoute.Create), HttpPost]
         public async Task<WalletDTO> Create([FromBody] WalletDTO walletRequestDTO)
         {
-            throw new NotImplementedException();
+            Entities.Wallet requestWallet = new Entities.Wallet
+            {
+                UserId = currentUserId,
+                Balance = walletRequestDTO.Balance,
+                Name = walletRequestDTO.Name
+            };
+            Entities.Wallet resultWallet = await walletService.Create(requestWallet);
+            return new WalletDTO
+            {
+                Name = resultWallet.Name,
+                Balance = resultWallet.Balance,
+                UserId = resultWallet.UserId,
+                Errors = resultWallet.Errors,
+            };
+
         }
 
         [Route(WalletRoute.Update), HttpPost]
-        public async Task<WalletDTO> Update([FromBody] WalletDTO walletRequestDTO) 
+        public async Task<WalletDTO> Update([FromBody] WalletUpdateRequestDTO walletUpdateRequestDTO) 
         {
-            throw new NotImplementedException();
+            Entities.Wallet requestWallet = new Entities.Wallet
+            {
+                UserId = currentUserId,
+                Balance = walletUpdateRequestDTO.Balance,
+                Name = walletUpdateRequestDTO.Name
+            };
+            Entities.Wallet resultWallet = await walletService.UpdateWalletName(requestWallet, walletUpdateRequestDTO.NewName);
+            return new WalletDTO
+            {
+                Name = resultWallet.Name,
+                Balance = resultWallet.Balance,
+                UserId = resultWallet.UserId,
+                Errors = resultWallet.Errors,
+            };
         }
 
         [Route(WalletRoute.Delete), HttpPost]
         public async Task<WalletDTO> Delete([FromBody] WalletDTO walletRequestDTO) 
         {
-            throw new NotImplementedException();
+            Entities.Wallet requestWallet = new Entities.Wallet
+            {
+                UserId = currentUserId,
+                Name = walletRequestDTO.Name
+            };
+            Entities.Wallet resultWallet = await walletService.Delete(requestWallet);
+            return new WalletDTO
+            {
+                Name = resultWallet.Name,
+                Balance = resultWallet.Balance,
+                UserId = resultWallet.UserId,
+                Errors = resultWallet.Errors
+            };
         }
 
         [Route(WalletRoute.Transfer), HttpPost]
-        public async Task<bool> Transfer([FromBody] WalletTransferRequestDTO walletTransferRequestDTO)
+        public async Task<WalletTransferResponseDTO> Transfer([FromBody] WalletTransferRequestDTO walletTransferRequestDTO)
         {
-            throw new NotImplementedException();
+            // Tao 2 wallet BO de gui cho Service xu ly Transfer
+            Entities.Wallet sourceWallet = new Entities.Wallet
+            {
+                Name = walletTransferRequestDTO.SourceWalletName,
+                UserId = currentUserId
+            };
+            Entities.Wallet destWallet = new Entities.Wallet
+            {
+                Name = walletTransferRequestDTO.DestWalletName,
+                UserId = currentUserId
+            };
+            Tuple<Entities.Wallet, Entities.Wallet> res = await walletService.Transfer(
+                Tuple.Create(sourceWallet, destWallet), 
+                walletTransferRequestDTO.Amount, 
+                walletTransferRequestDTO.Note);
+
+            // Tao response object
+            WalletTransferResponseDTO resDTO = new WalletTransferResponseDTO
+            {
+                SourceWalletName = res.Item1.Name,
+                DestWalletName = res.Item2.Name,
+                UserId = res.Item1.UserId,
+                Errors = new List<string>()
+            };
+            resDTO.Errors.AddRange(res.Item1.Errors);
+            resDTO.Errors.AddRange(res.Item2.Errors);
+            return resDTO;
         }
     }
 }

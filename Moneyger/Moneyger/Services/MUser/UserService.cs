@@ -65,7 +65,7 @@ namespace Moneyger.Services
                 catch (Exception e)
                 {
                     await UnitOfWork.Rollback();
-                    user.AddError(nameof(UserValidator), nameof(User.Password), CommonEnum.ErrorCode.SystemError);
+                    user.AddError(nameof(UserService), nameof(ChangePassword), CommonEnum.ErrorCode.SystemError);
                     return user;
                 }
             }
@@ -102,7 +102,7 @@ namespace Moneyger.Services
                 catch (Exception e)
                 {
                     await UnitOfWork.Rollback();
-                    user.AddError(nameof(UserValidator), nameof(User.Password), CommonEnum.ErrorCode.SystemError);
+                    user.AddError(nameof(UserService), nameof(Create), CommonEnum.ErrorCode.SystemError);
                     return user;
                 }
             }

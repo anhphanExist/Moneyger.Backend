@@ -36,7 +36,7 @@ namespace Moneyger.Repositories
                 Id = category.Id,
                 CX = category.CX,
                 Name = category.Name,
-                Type = category.Type,
+                Type = category.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                 Image = category.Image
             });
             wASContext.SaveChangesAsync();
@@ -53,7 +53,7 @@ namespace Moneyger.Repositories
                     Id = c.Id,
                     CX = c.CX,
                     Name = c.Name,
-                    Type = c.Type,
+                    Type = c.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                     Image = c.Image
                 }).FirstOrDefault();
                 wASContext.Category.Remove(category);
@@ -78,7 +78,7 @@ namespace Moneyger.Repositories
                 Id = category.Id,
                 CX = category.CX,
                 Name = category.Name,
-                Type = category.Type,
+                Type = category.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                 Image = category.Image
             };
         }
@@ -93,7 +93,7 @@ namespace Moneyger.Repositories
                     Id = q.Id,
                     CX = q.CX,
                     Name = q.Name,
-                    Type = q.Type,
+                    Type = q.Type == false ? CategoryType.Outflow : CategoryType.Inflow,
                     Image = q.Image
                 })
                 .ToListAsync();
@@ -109,7 +109,7 @@ namespace Moneyger.Repositories
                     Id = category.Id,
                     CX = category.CX,
                     Name = category.Name,
-                    Type = category.Type,
+                    Type = category.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                     Image = category.Image
                 });
             wASContext.SaveChanges();
