@@ -8,8 +8,8 @@ namespace Moneyger.Entities
 {
     public class TransactionMonthGroup : DataEntity
     {
-        public decimal Income { get; set; }
-        public decimal Outcome { get; set; }
+        public decimal Inflow { get; set; }
+        public decimal Outflow { get; set; }
         public decimal InOutRate { get; set; }
         public DateTime Month { get; set; }
         public List<TransactionDayGroup> TransactionDayGroups { get; set; }
