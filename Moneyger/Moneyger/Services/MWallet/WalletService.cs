@@ -52,7 +52,7 @@ namespace Moneyger.Services.MWallet
                 catch (Exception ex)
                 {
                     await UnitOfWork.Rollback();
-                    wallet.AddError(nameof(WalletService), nameof(Wallet.Id), CommonEnum.ErrorCode.SystemError);
+                    wallet.AddError(nameof(WalletService), nameof(wallet.Id), CommonEnum.ErrorCode.SystemError);
                 }
             }
             return wallet;
@@ -74,7 +74,7 @@ namespace Moneyger.Services.MWallet
                 catch (Exception ex)
                 {
                     await UnitOfWork.Rollback();
-                    wallet.AddError(nameof(WalletService), nameof(Wallet.Id), CommonEnum.ErrorCode.SystemError);
+                    wallet.AddError(nameof(WalletService), nameof(wallet.Id), CommonEnum.ErrorCode.SystemError);
                 }
             }
             return wallet;
@@ -192,7 +192,7 @@ namespace Moneyger.Services.MWallet
                 catch (Exception ex)
                 {
                     await UnitOfWork.Rollback();
-                    wallet.AddError(nameof(WalletService), nameof(Wallet.Id), CommonEnum.ErrorCode.SystemError);
+                    wallet.AddError(nameof(WalletService), nameof(wallet.Id), CommonEnum.ErrorCode.SystemError);
                 }
             }
             return wallet;
