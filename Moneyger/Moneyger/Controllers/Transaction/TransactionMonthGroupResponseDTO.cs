@@ -10,6 +10,6 @@ namespace Moneyger.Controllers.Transaction
         public decimal Inflow { get; set; }
         public decimal Outflow { get; set; }
         public decimal InOutRate { get; set; }
-        public List<TransactionDayGroupResponseDTO> transactionDayGroups { get; set; }
+        public List<TransactionDayGroupDTO> TransactionDayGroups { get; set; }
     }
 }
