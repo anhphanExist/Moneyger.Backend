@@ -15,6 +15,7 @@ namespace Moneyger.Repositories
         IUserRepository UserRepository { get; }
         ICategoryRepository categoryRepository { get; }
         IWalletRepository WalletRepository { get;  }
+        ITransactionRepository TransactionRepository { get;  }
     }
     public class UOW : IUOW
     {
@@ -24,6 +25,7 @@ namespace Moneyger.Repositories
         public ICategoryRepository categoryRepository { get;  }
 
         public IWalletRepository WalletRepository { get; }
+        public ITransactionRepository TransactionRepository { get;  }
 
         public UOW(WASContext wASContext)
         {
@@ -31,6 +33,7 @@ namespace Moneyger.Repositories
             UserRepository = new UserRepository(this.wASContext);
             categoryRepository = new CategoryRepository(this.wASContext);
             WalletRepository = new WalletRepository(this.wASContext);
+            TransactionRepository = new TransactionRepository(this.wASContext);
         }
 
         public async Task Begin()

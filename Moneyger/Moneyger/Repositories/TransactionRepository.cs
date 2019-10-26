@@ -13,9 +13,10 @@ namespace Moneyger.Repositories
     public interface ITransactionRepository
     {
         Task<Transaction> Get(Guid Id);
+        Task<Transaction> Get(TransactionFilter filter);
         Task<bool> Create(Transaction transaction);
         Task<bool> Update(Transaction transaction);
-        Task<bool> Delete(Guid Id);
+        Task<bool> Delete(Transaction transaction);
         Task<int> Count(TransactionFilter filter);
         Task<List<Transaction>> List(TransactionFilter filter);
     }
@@ -50,9 +51,9 @@ namespace Moneyger.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(Guid Id)
+        public async Task<bool> Delete(Transaction transaction)
         {
-            TransactionDAO transactionDAO = wASContext.Transaction.Where(t => t.Id.Equals(Id)).FirstOrDefault();
+            TransactionDAO transactionDAO = wASContext.Transaction.Where(t => t.Id.Equals(transaction.Id)).FirstOrDefault();
             try
             {
                 wASContext.Transaction.Remove(transactionDAO);
@@ -81,6 +82,20 @@ namespace Moneyger.Repositories
                 Amount = transaction.Amount,
                 Note = transaction.Note,
                 Date = transaction.Date
+            };
+        }
+
+        public async Task<Transaction> Get(TransactionFilter filter)
+        {
+            IQueryable<TransactionDAO> transactionDAOs = wASContext.Transaction.AsNoTracking();
+            TransactionDAO transactionDAO = DynamicFilter(transactionDAOs, filter).FirstOrDefault();
+            return new Transaction
+            {
+                Id = transactionDAO.Id,
+                WalletId = transactionDAO.WalletId,
+                CategoryId = transactionDAO.CategoryId,
+                Amount = transactionDAO.Amount,
+                Date = transactionDAO.Date
             };
         }
 
