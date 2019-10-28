@@ -17,14 +17,23 @@ namespace Moneyger.Controllers.Transaction
 
     public class TransactionController : ApiController
     {
+        //private ITransactionService transactionService;
         public TransactionController()
         {
 
         }
 
         [Route(TransactionRoute.Create), HttpPost]
-        public async Task Create([FromBody] TransactionDTO transactionDTO)
+        public async Task Create([FromBody] TransactionDTO transactionRequestDTO)
         {
+            Entities.Transaction newTransaction = new Entities.Transaction {
+                WalletName = transactionRequestDTO.WalletName,
+                Amount = transactionRequestDTO.Amount,
+                CategoryName = transactionRequestDTO.CategoryName,
+                Date = transactionRequestDTO.Date,
+                Note = transactionRequestDTO.Note
+            };
+
 
         }
 
