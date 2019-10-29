@@ -136,8 +136,10 @@ namespace Moneyger.Controllers.Wallet
                 UserId = res.Item1.UserId,
                 Errors = new List<string>()
             };
-            resDTO.Errors.AddRange(res.Item1.Errors);
-            resDTO.Errors.AddRange(res.Item2.Errors);
+            if (res.Item1.Errors != null)
+                resDTO.Errors.AddRange(res.Item1.Errors);
+            if (res.Item2.Errors != null)
+                resDTO.Errors.AddRange(res.Item2.Errors);
             return resDTO;
         }
     }

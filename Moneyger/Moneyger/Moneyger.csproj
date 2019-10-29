@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\MTransactionMonthGroup\**" />
+    <Content Remove="Services\MTransactionMonthGroup\**" />
+    <EmbeddedResource Remove="Services\MTransactionMonthGroup\**" />
+    <None Remove="Services\MTransactionMonthGroup\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EntityFrameworkCore.Scaffolding.Handlebars" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -18,10 +25,6 @@
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="2.7.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\MTransactionMonthGroup\" />
   </ItemGroup>
 
 </Project>

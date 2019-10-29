@@ -15,7 +15,7 @@ namespace Moneyger.Repositories
         Task<Wallet> Get(Guid Id);
         Task<bool> Create(Wallet wallet);
         Task<bool> Update(Wallet wallet);
-        Task<bool> Delete(Wallet wallet);
+        Task<bool> Delete(Guid Id);
         Task<int> Count(WalletFilter filter);
         Task<List<Wallet>> List(WalletFilter filter);
     }
@@ -57,9 +57,9 @@ namespace Moneyger.Repositories
             return true;
         }
 
-        public async Task<bool> Delete(Wallet wallet)
+        public async Task<bool> Delete(Guid Id)
         {
-            WalletDAO walletDAO = wASContext.Wallet.Where(w => w.Id.Equals(wallet.Id)).FirstOrDefault();
+            WalletDAO walletDAO = wASContext.Wallet.Where(w => w.Id.Equals(Id)).FirstOrDefault();
             try
             {
                 wASContext.Wallet.Remove(walletDAO);
@@ -134,7 +134,7 @@ namespace Moneyger.Repositories
         {
             if(filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.UserId.Equals(filter.UserId));
+            query = query.Where(q => q.UserId, filter.UserId);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.Name != null)

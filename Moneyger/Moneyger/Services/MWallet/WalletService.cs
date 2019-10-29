@@ -67,17 +67,23 @@ namespace Moneyger.Services.MWallet
             {
                 try
                 {
-                    var walletB = await UnitOfWork.WalletRepository.Get(wallet.Id);
-                    await UnitOfWork.WalletRepository.Delete(wallet);
+                    WalletFilter walletFilter = new WalletFilter
+                    {
+                        UserId = new GuidFilter { Equal = wallet.UserId },
+                        Name = new StringFilter { Equal = wallet.Name }
+                    };
+                    Wallet walletToDelete = await UnitOfWork.WalletRepository.Get(walletFilter);
+                    await UnitOfWork.WalletRepository.Delete(walletToDelete.Id);
                     await UnitOfWork.Commit();
+                    return walletToDelete;
                 }
                 catch (Exception ex)
                 {
                     await UnitOfWork.Rollback();
                     wallet.AddError(nameof(WalletService), nameof(wallet.Id), CommonEnum.ErrorCode.SystemError);
+                    return wallet;
                 }
             }
-            return wallet;
         }
 
         public async Task<Wallet> Get(WalletFilter filter)
@@ -100,60 +106,65 @@ namespace Moneyger.Services.MWallet
             if (!await WalletValidator.Transfer(transferWalletTuple))
                 return transferWalletTuple;
 
-            try
+            using (UnitOfWork.Begin())
             {
-                // tao filter de tim 2 wallet yeu cau trong Repo
-                WalletFilter sourceWalletFilter = new WalletFilter
+                try
                 {
-                    UserId = new GuidFilter { Equal = transferWalletTuple.Item1.UserId },
-                    Name = new StringFilter { Equal = transferWalletTuple.Item1.Name }
-                };
-                WalletFilter destinationWalletFilter = new WalletFilter
+                    // tao filter de tim 2 wallet yeu cau trong Repo
+                    WalletFilter sourceWalletFilter = new WalletFilter
+                    {
+                        UserId = new GuidFilter { Equal = transferWalletTuple.Item1.UserId },
+                        Name = new StringFilter { Equal = transferWalletTuple.Item1.Name }
+                    };
+                    WalletFilter destinationWalletFilter = new WalletFilter
+                    {
+                        UserId = new GuidFilter { Equal = transferWalletTuple.Item2.UserId },
+                        Name = new StringFilter { Equal = transferWalletTuple.Item2.Name }
+                    };
+
+                    // Lay du lieu 2 wallet tu DB, tru tien cua sourceWallet va cong tien vao destWallet
+                    Wallet source = await UnitOfWork.WalletRepository.Get(sourceWalletFilter);
+                    Wallet dest = await UnitOfWork.WalletRepository.Get(destinationWalletFilter);
+                    source.Balance -= transferAmount;
+                    dest.Balance += transferAmount;
+
+                    // Tao transaction o ca 2 wallet
+                    Transaction sourceTransaction = new Transaction
+                    {
+                        Id = Guid.NewGuid(),
+                        Amount = transferAmount,
+                        Date = DateTime.Now,
+                        Note = note,
+                        WalletId = source.Id,
+                        CategoryId = CommonEnum.CreateGuid("Wallet Transfer Source")
+                    };
+                    Transaction destTransaction = new Transaction
+                    {
+                        Id = Guid.NewGuid(),
+                        Amount = transferAmount,
+                        Date = DateTime.Now,
+                        Note = note,
+                        WalletId = dest.Id,
+                        CategoryId = CommonEnum.CreateGuid("Wallet Transfer Destination")
+                    };
+
+                    // Update vao Repo
+                    await UnitOfWork.WalletRepository.Update(source);
+                    await UnitOfWork.TransactionRepository.Create(sourceTransaction);
+                    await UnitOfWork.WalletRepository.Update(dest);
+                    await UnitOfWork.TransactionRepository.Create(destTransaction);
+                    await UnitOfWork.Commit();
+
+                    // Tra ve tuple da transfer
+                    return Tuple.Create(source, dest);
+                }
+                catch (Exception e)
                 {
-                    UserId = new GuidFilter { Equal = transferWalletTuple.Item2.UserId },
-                    Name = new StringFilter { Equal = transferWalletTuple.Item2.Name }
-                };
-
-                // Lay du lieu 2 wallet tu DB, tru tien cua sourceWallet va cong tien vao destWallet
-                Wallet source = await UnitOfWork.WalletRepository.Get(sourceWalletFilter);
-                Wallet dest = await UnitOfWork.WalletRepository.Get(destinationWalletFilter);
-                source.Balance -= transferAmount;
-                dest.Balance += transferAmount;
-
-                // Tao transaction o ca 2 wallet
-                Transaction sourceTransaction = new Transaction
-                {
-                    Id = Guid.NewGuid(),
-                    Amount = transferAmount,
-                    Date = DateTime.Now,
-                    Note = note,
-                    WalletId = source.Id,
-                    CategoryId = CommonEnum.CreateGuid("Wallet Transfer Source")
-                };
-                Transaction destTransaction = new Transaction
-                {
-                    Id = Guid.NewGuid(),
-                    Amount = transferAmount,
-                    Date = DateTime.Now,
-                    Note = note,
-                    WalletId = dest.Id,
-                    CategoryId = CommonEnum.CreateGuid("Wallet Transfer Destination")
-                };
-
-                // Update vao Repo
-                await UnitOfWork.WalletRepository.Update(source);
-                await UnitOfWork.WalletRepository.Update(dest);
-                await UnitOfWork.Commit();
-
-                // Tra ve tuple da transfer
-                return Tuple.Create(source, dest);
-            }
-            catch (Exception e)
-            {
-                await UnitOfWork.Rollback();
-                transferWalletTuple.Item1.AddError(nameof(WalletService), nameof(Transfer), CommonEnum.ErrorCode.SystemError);
-                transferWalletTuple.Item2.AddError(nameof(WalletService), nameof(Transfer), CommonEnum.ErrorCode.SystemError);
-                return transferWalletTuple;
+                    await UnitOfWork.Rollback();
+                    transferWalletTuple.Item1.AddError(nameof(WalletService), nameof(Transfer), CommonEnum.ErrorCode.SystemError);
+                    transferWalletTuple.Item2.AddError(nameof(WalletService), nameof(Transfer), CommonEnum.ErrorCode.SystemError);
+                    return transferWalletTuple;
+                }
             }
         }
 
@@ -170,11 +181,8 @@ namespace Moneyger.Services.MWallet
                 {
                     WalletFilter filter = new WalletFilter
                     {
-                        Id = new GuidFilter { Equal = wallet.Id },
                         UserId = new GuidFilter { Equal = wallet.UserId },
-                        Name = new StringFilter { Equal = wallet.Name },
-                        Balance = new DecimalFilter { Equal = wallet.Balance }
-
+                        Name = new StringFilter { Equal = wallet.Name }
                     };
                     wallet = await Get(filter);
                     wallet.Name = newName;

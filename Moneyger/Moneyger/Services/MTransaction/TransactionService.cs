@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Services.MTransaction
 {
-    public interface ITransactionService
+    public interface ITransactionService : IServiceScoped
     {
         Task<Transaction> Get(Guid Id);
         Task<Transaction> Get(TransactionFilter filter);

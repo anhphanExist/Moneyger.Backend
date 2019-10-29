@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Moneyger.Services.MTransaction
 {
-    public interface ITransactionValidator
+    public interface ITransactionValidator : IServiceScoped
     {
         Task<bool> Create(Transaction transaction);
         Task<bool> Update(Transaction transaction);

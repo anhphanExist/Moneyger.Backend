@@ -117,7 +117,6 @@ namespace Moneyger.Services.MWallet
         {
             WalletFilter filter = new WalletFilter
             {
-                Id = new GuidFilter { Equal = wallet.Id },
                 UserId = new GuidFilter { Equal = wallet.UserId },
                 Name = new StringFilter { Equal = wallet.Name}
             };
@@ -125,7 +124,7 @@ namespace Moneyger.Services.MWallet
             int countWallet = await unitOfWork.WalletRepository.Count(filter);
             if(countWallet == 0)
             {
-                wallet.AddError(nameof(WalletValidator), nameof(Wallet.Id), ErrorCode.WalletDuplicated);
+                wallet.AddError(nameof(WalletValidator), nameof(Wallet.Name), ErrorCode.WalletNotExisted);
                 return false;
             }
             return true;

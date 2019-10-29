@@ -11,6 +11,7 @@ using Moneyger.Services;
 namespace Moneyger.Controllers.Authentication
 {
     [Route("api/Moneyger")]
+    [Authorize]
     public class AuthenticationController : ControllerBase
     {
         private IUserService userService;
@@ -37,7 +38,6 @@ namespace Moneyger.Controllers.Authentication
             };
         }
 
-        [Authorize]
         [Route("change-password"), HttpPost]
         public async Task<ChangePasswordResponseDTO> ChangePassword([FromBody] ChangePasswordRequestDTO changePasswordDTO)
         {

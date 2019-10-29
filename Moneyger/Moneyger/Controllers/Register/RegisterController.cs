@@ -11,7 +11,7 @@ using Moneyger.Services;
 namespace Moneyger.Controllers.Register
 {
     [Route("api/Moneyger")]
-    [ApiController]
+    [Authorize]
     public class RegisterController : ControllerBase
     {
         private IUserService userService;
