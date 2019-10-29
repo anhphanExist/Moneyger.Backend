@@ -9,7 +9,6 @@ namespace Moneyger.Entities
     public class Category : DataEntity
     {
         public Guid Id { get; set; }
-        public long CX { get; set; }
         public string Name { get; set; }
         public CategoryType Type { get; set; }
         public byte[] Image { get; set; }
@@ -20,7 +19,6 @@ namespace Moneyger.Entities
         public StringFilter Name { get; set; }
         public bool Type { get; set; }
         public CategoryOrder OrderBy { get; set; }
-        //public CategorySelect Selects { get; set; }
         public CategoryFilter() : base()
         {
 
@@ -38,13 +36,4 @@ namespace Moneyger.Entities
         Outflow,
         Inflow
     }
-
-    /*[Flags]
-    public enum CategorySelect
-    {
-        Id = 1,
-        CX = 2,
-        Name = 4,
-        Type = 8,
-    }*/
 }

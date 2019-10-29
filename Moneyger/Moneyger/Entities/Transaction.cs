@@ -9,7 +9,6 @@ namespace Moneyger.Entities
     public class Transaction : DataEntity
     {
         public Guid Id { get; set; }
-        public long CX { get; set; }
         public Guid WalletId { get; set; }
         public string WalletName { get; set; }
         public Guid CategoryId { get; set; }
@@ -21,8 +20,11 @@ namespace Moneyger.Entities
     public class TransactionFilter : FilterEntity
     {
         public GuidFilter Id { get; set; }
+        public GuidFilter UserId { get; set; }
         public GuidFilter WalletId { get; set; }
+        public StringFilter WalletName { get; set; }
         public GuidFilter CategoryId { get; set; }
+        public StringFilter CategoryName { get; set; }
         public DateTimeFilter Date { get; set; }
         public TransactionOrder OrderBy { get; set; }
         public TransactionFilter() : base()

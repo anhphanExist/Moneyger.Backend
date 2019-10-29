@@ -5,6 +5,8 @@ namespace Moneyger.Controllers.Transaction
 {
     public class TransactionMonthGroupRequestDTO : DataDTO
     {
-        public DateTime Month { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
+        public string WalletName { get; set; }
     }
 }

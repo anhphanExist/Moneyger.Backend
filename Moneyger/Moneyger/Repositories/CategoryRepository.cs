@@ -76,7 +76,6 @@ namespace Moneyger.Repositories
             return new Category
             {
                 Id = category.Id,
-                CX = category.CX,
                 Name = category.Name,
                 Type = category.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                 Image = category.Image
@@ -91,7 +90,6 @@ namespace Moneyger.Repositories
             List<Category> list = await query.Select(q => new Category()
                 {
                     Id = q.Id,
-                    CX = q.CX,
                     Name = q.Name,
                     Type = q.Type == false ? CategoryType.Outflow : CategoryType.Inflow,
                     Image = q.Image

@@ -113,8 +113,7 @@ namespace Moneyger.Repositories
                 Name = q.Name,
                 Balance = q.Balance,
                 UserId = q.UserId
-            })
-            .ToListAsync();
+            }).ToListAsync();
             return list;
         }
 

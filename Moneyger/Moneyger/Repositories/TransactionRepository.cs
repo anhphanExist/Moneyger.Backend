@@ -76,9 +76,10 @@ namespace Moneyger.Repositories
             return new Transaction
             {
                 Id = transaction.Id,
-                CX = transaction.CX,
                 WalletId = transaction.WalletId,
+                WalletName = transaction.Wallet.Name,
                 CategoryId = transaction.CategoryId,
+                CategoryName = transaction.Category.Name,
                 Amount = transaction.Amount,
                 Note = transaction.Note,
                 Date = transaction.Date
@@ -93,9 +94,12 @@ namespace Moneyger.Repositories
             {
                 Id = transactionDAO.Id,
                 WalletId = transactionDAO.WalletId,
+                WalletName = transactionDAO.Wallet.Name,
                 CategoryId = transactionDAO.CategoryId,
+                CategoryName = transactionDAO.Category.Name,
                 Amount = transactionDAO.Amount,
-                Date = transactionDAO.Date
+                Date = transactionDAO.Date,
+                Note = transactionDAO.Note
             };
         }
 
@@ -107,14 +111,14 @@ namespace Moneyger.Repositories
             List<Transaction> list = await query.Select(transaction => new Transaction()
             {
                     Id = transaction.Id,
-                    CX = transaction.CX,
                     WalletId = transaction.WalletId,
+                    WalletName = transaction.Wallet.Name,
                     CategoryId = transaction.CategoryId,
+                    CategoryName = transaction.Category.Name,
                     Amount = transaction.Amount,
                     Note = transaction.Note,
                     Date = transaction.Date
-                })
-                .ToListAsync();
+            }).ToListAsync();
             return list;
         }
 
@@ -125,7 +129,6 @@ namespace Moneyger.Repositories
                 .UpdateFromQuery(u => new TransactionDAO
                 {
                     WalletId = transaction.WalletId,
-                    CX = transaction.CX, 
                     CategoryId = transaction.CategoryId,
                     Amount = transaction.Amount,
                     Note = transaction.Note,
@@ -139,8 +142,15 @@ namespace Moneyger.Repositories
         {
             if (filter == null)
                 return query.Where(q => 1 == 0);
-            query = query.Where(q => q.WalletId.Equals(filter.WalletId));
-            query = query.Where(q => q.CategoryId.Equals(filter.CategoryId));
+            query = query.Where(q => q.Wallet.UserId, filter.UserId);
+            if (filter.WalletId != null)
+                query = query.Where(q => q.WalletId, filter.WalletId);
+            if (filter.WalletName != null)
+                query = query.Where(q => q.Wallet.Name, filter.WalletName);
+            if (filter.CategoryId != null)
+                query = query.Where(q => q.CategoryId, filter.CategoryId);
+            if (filter.CategoryName != null)
+                query = query.Where(q => q.Category.Name, filter.CategoryName);
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.Date != null)

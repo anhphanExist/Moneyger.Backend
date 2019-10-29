@@ -9,7 +9,6 @@ namespace Moneyger.Entities
     public class Wallet : DataEntity
     {
         public Guid Id { get; set; }
-        public long CX { get; set; }
         public string Name { get; set; }
         public decimal Balance { get; set; }
         public Guid UserId { get; set; }
