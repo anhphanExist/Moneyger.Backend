@@ -10,7 +10,7 @@ using Moneyger.Services;
 
 namespace Moneyger.Controllers.Register
 {
-    [Route("api/register")]
+    [Route("api/Moneyger")]
     [ApiController]
     public class RegisterController : ControllerBase
     {
@@ -35,12 +35,6 @@ namespace Moneyger.Controllers.Register
                 Username = res.Username,
                 Errors = res.Errors
             };
-        }
-
-        [Route("update"), HttpPost]
-        public async Task<RegisterResponseDTO> Update(RegisterUpdateRequestDTO registerUpdateRequestDTO)
-        {
-            throw new NotImplementedException();
         }
     }
 }

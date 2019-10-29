@@ -10,7 +10,7 @@ using Moneyger.Services;
 
 namespace Moneyger.Controllers.Authentication
 {
-    [Route("api/authentication")]
+    [Route("api/Moneyger")]
     public class AuthenticationController : ControllerBase
     {
         private IUserService userService;
