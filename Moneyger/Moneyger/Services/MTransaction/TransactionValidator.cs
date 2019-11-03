@@ -33,10 +33,10 @@ namespace Moneyger.Services.MTransaction
 
         public async Task<bool> Create(Transaction transaction)
         {
-            List<Transaction> transactions = new List<Transaction> { transaction };
+           // List<Transaction> transactions = new List<Transaction> { transaction };
 
             bool IsValid = true;
-            IsValid &= await ValidateInput(transactions);
+            IsValid &= await ValidateInput(transaction);
             return IsValid;
 
         }
@@ -53,6 +53,7 @@ namespace Moneyger.Services.MTransaction
             //List<Transaction> transactions = new List<Transaction> { transaction };
             bool IsValid = true;
             IsValid &= await ValidateId(transaction);
+            IsValid &= await ValidateInput(transaction);
 
             if (!IsValid) return false;
 
@@ -75,24 +76,35 @@ namespace Moneyger.Services.MTransaction
 
             return count == 1;
         }
-        private async Task<bool> ValidateInput(List<Transaction> transactions)
+        private async Task<bool> ValidateInput(Transaction transaction)
         {
-            foreach(var transaction in transactions)
+            if(transaction.WalletName == null)
             {
-                if(transaction.WalletName == null)
-                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.WalletName), ErrorCode.WalletNameInvalid);
-                if (transaction.CategoryName == null)
-                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.CategoryName), ErrorCode.CategoryNameInvalid);
-                if (transaction.Amount.ToString() == null)
-                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountEmpty);
-                if (transaction.Amount <= 0)
-                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountInvalid);
-                if (transaction.Date == null)
-                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.Date), ErrorCode.DateInvalid);
+                transaction.AddError(nameof(TransactionValidator), nameof(transaction.WalletName), ErrorCode.WalletNameInvalid);
+                return false;
+            }               
+            if (transaction.CategoryName == null)
+            {
+                transaction.AddError(nameof(TransactionValidator), nameof(transaction.CategoryName), ErrorCode.CategoryNameInvalid);
+                return false;
+            }               
+            if (transaction.Amount.ToString() == null)
+            {
+                transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountEmpty);
+                return false;
+            }              
+            if (transaction.Amount <= 0 || transaction.Amount.ToString().Length > 15)
+            {
+                transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountInvalid);
+                return false;
+            }               
+            if (transaction.Date == null)
+            {
+                transaction.AddError(nameof(TransactionValidator), nameof(transaction.Date), ErrorCode.DateInvalid);
+                return false;
             }
-            bool IsValid = true;
-            transactions.ForEach(e => IsValid &= e.IsValidated);
-            return IsValid;
+
+            return true;
         }
     }
 }
