@@ -20,7 +20,10 @@ namespace Moneyger.Services.MTransaction
         {
             IdNotFound,
             DateInvalid,
-            AmountInvalid
+            AmountInvalid,
+            AmountEmpty,
+            WalletNameInvalid,
+            CategoryNameInvalid
         }
         private IUOW unitOfWork;
         public TransactionValidator(IUOW unitOfWork)
@@ -76,7 +79,13 @@ namespace Moneyger.Services.MTransaction
         {
             foreach(var transaction in transactions)
             {
-                if (transaction.Amount < 0)
+                if(transaction.WalletName == null)
+                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.WalletName), ErrorCode.WalletNameInvalid);
+                if (transaction.CategoryName == null)
+                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.CategoryName), ErrorCode.CategoryNameInvalid);
+                if (transaction.Amount.ToString() == null)
+                    transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountEmpty);
+                if (transaction.Amount <= 0)
                     transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountInvalid);
                 if (transaction.Date == null)
                     transaction.AddError(nameof(TransactionValidator), nameof(transaction.Date), ErrorCode.DateInvalid);
