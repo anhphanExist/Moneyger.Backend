@@ -22,7 +22,7 @@ namespace Moneyger.Controllers.Register
 
         [AllowAnonymous]
         [Route("signup"), HttpPost]
-        public async Task<RegisterResponseDTO> Signup(RegisterRequestDTO registerUserDTO)
+        public async Task<RegisterResponseDTO> Signup([FromBody] RegisterRequestDTO registerUserDTO)
         {
             User user = new User
             {
