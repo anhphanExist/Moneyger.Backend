@@ -23,7 +23,10 @@ namespace Moneyger.Services.MWallet
             WalletDuplicated,
             StringLimited,
             StringEmpty,
-            InvalidWalletName
+            InvalidWalletName,
+            InitBalanceEmpty,
+            InitBalanceLimited,
+            InitBalanceInvalid
         }
         private IUOW unitOfWork;
         public WalletValidator(IUOW unitOfWork)
@@ -35,6 +38,7 @@ namespace Moneyger.Services.MWallet
             bool isValid = true;
             isValid &= await ValidateNotExistedWallet(wallet);
             isValid &= ValidateName(wallet);
+            isValid &= ValidateBalance(wallet);
 
             return isValid;
         }
@@ -49,6 +53,7 @@ namespace Moneyger.Services.MWallet
             bool isValid = true;
 
             isValid &= ValidateName(wallet);
+            isValid &= ValidateBalance(wallet);
             isValid &= await ValidateExistedWallet(wallet);
             isValid &= ValidateNewWalletName(wallet, newName);
             return isValid;
@@ -74,7 +79,7 @@ namespace Moneyger.Services.MWallet
             int count = await unitOfWork.WalletRepository.Count(walletFilter);
             if (count > 0)
             {
-                wallet.AddError(nameof(WalletValidator), nameof(Wallet.Name), ErrorCode.WalletDuplicated);
+                wallet.AddError(nameof(WalletValidator), nameof(wallet.Name), ErrorCode.WalletDuplicated);
                 return false;
             }
             return true;
@@ -83,12 +88,12 @@ namespace Moneyger.Services.MWallet
         {
             if (wallet.Name.Length <= 0)
             {
-                wallet.AddError(nameof(Wallet), nameof(Wallet.Name), ErrorCode.StringEmpty);
+                wallet.AddError(nameof(Wallet), nameof(wallet.Name), ErrorCode.StringEmpty);
                 return false;
             }
             else if (wallet.Name.Length > 500)
             {
-                wallet.AddError(nameof(Wallet), nameof(Wallet.Name), ErrorCode.StringLimited);
+                wallet.AddError(nameof(Wallet), nameof(wallet.Name), ErrorCode.StringLimited);
                 return false;
             }
             return true;
@@ -102,12 +107,12 @@ namespace Moneyger.Services.MWallet
             }
             else if (newWalletName.Length <= 0)
             {
-                wallet.AddError(nameof(Wallet), nameof(Wallet.Name), ErrorCode.StringEmpty);
+                wallet.AddError(nameof(Wallet), nameof(wallet.Name), ErrorCode.StringEmpty);
                 return false;
             }
             else if(newWalletName.Length > 500)
             {
-                wallet.AddError(nameof(Wallet), nameof(Wallet.Name), ErrorCode.StringLimited);
+                wallet.AddError(nameof(Wallet), nameof(wallet.Name), ErrorCode.StringLimited);
                 return false;
             }
             return true;
@@ -124,7 +129,7 @@ namespace Moneyger.Services.MWallet
             int countWallet = await unitOfWork.WalletRepository.Count(filter);
             if(countWallet == 0)
             {
-                wallet.AddError(nameof(WalletValidator), nameof(Wallet.Name), ErrorCode.WalletNotExisted);
+                wallet.AddError(nameof(WalletValidator), nameof(wallet.Name), ErrorCode.WalletNotExisted);
                 return false;
             }
             return true;
@@ -140,7 +145,26 @@ namespace Moneyger.Services.MWallet
             int countWallet = await unitOfWork.WalletRepository.Count(filter);
             if (countWallet > 0)
             {
-                wallet.AddError(nameof(WalletValidator), nameof(Wallet.Name), ErrorCode.WalletDuplicated);
+                wallet.AddError(nameof(WalletValidator), nameof(wallet.Name), ErrorCode.WalletDuplicated);
+                return false;
+            }
+            return true;
+        }
+        private bool ValidateBalance(Wallet wallet)
+        {
+            if (wallet.Balance.ToString() == null)
+            {
+                wallet.AddError(nameof(Wallet), nameof(wallet.Balance), ErrorCode.InitBalanceEmpty);
+                return false;
+            }
+            else if (wallet.Balance.ToString().Length > 15)
+            {
+                wallet.AddError(nameof(Wallet), nameof(wallet.Balance), ErrorCode.InitBalanceLimited);
+                return false;
+            }
+            else if (wallet.Balance <= 0)
+            {
+                wallet.AddError(nameof(Wallet), nameof(wallet.Balance), ErrorCode.InitBalanceInvalid);
                 return false;
             }
             return true;
