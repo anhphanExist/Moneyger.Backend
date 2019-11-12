@@ -168,6 +168,7 @@ namespace Moneyger.Services.MTransaction
                Inflow = inflow,
                InOutRate = inflow + outflow,
                Month = filter.Month,
+               Year = filter.Year,
                TransactionDayGroups = transactionDayGroups
             };
         }

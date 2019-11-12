@@ -38,7 +38,8 @@ namespace Moneyger.Controllers.Wallet
         {
             WalletFilter walletFilter = new WalletFilter()
             {
-                UserId = new GuidFilter { Equal = currentUserId }
+                UserId = new GuidFilter { Equal = currentUserId },
+                
             };
             List<Entities.Wallet> wallets = await walletService.List(walletFilter);
             List<WalletDTO> walletDTOs = new List<WalletDTO>();
