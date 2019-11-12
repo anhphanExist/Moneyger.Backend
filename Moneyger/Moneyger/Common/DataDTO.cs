@@ -19,7 +19,7 @@ namespace Moneyger.Common
         public FilterDTO()
         {
             Skip = 0;
-            Take = 10;
+            Take = Int32.MaxValue;
             OrderType = OrderType.ASC;
         }
     }

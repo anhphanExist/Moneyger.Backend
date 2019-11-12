@@ -17,7 +17,7 @@ namespace Moneyger.Entities
     {
         public GuidFilter Id { get; set; }
         public StringFilter Name { get; set; }
-        public bool Type { get; set; }
+        public bool? Type { get; set; }
         public CategoryOrder OrderBy { get; set; }
         public CategoryFilter() : base()
         {

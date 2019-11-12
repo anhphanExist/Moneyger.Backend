@@ -19,7 +19,7 @@ namespace Moneyger
         public FilterEntity()
         {
             Skip = 0;
-            Take = 10;
+            Take = Int32.MaxValue;
             OrderType = OrderType.ASC;
         }
     }

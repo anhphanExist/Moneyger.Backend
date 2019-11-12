@@ -144,6 +144,10 @@ namespace Moneyger.Repositories
                 if (filter.Name.NotStartsWith != null)
                     query = query.Where(c => c.Name.StartsWith(filter.Name.NotStartsWith));
             }
+            if (filter.Type != null)
+            {
+                query = query.Where(c => c.Type == filter.Type);
+            }
   
             return query;
         }
