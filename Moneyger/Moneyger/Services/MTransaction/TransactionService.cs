@@ -45,7 +45,28 @@ namespace Moneyger.Services.MTransaction
             {
                 try
                 {
+                    CategoryFilter categoryFilter = new CategoryFilter
+                    {
+                        Name = new StringFilter { Equal = transaction.CategoryName }
+                    };
+                    Category category = await UnitOfWork.CategoryRepository.Get(categoryFilter);
+
+                    WalletFilter walletFilter = new WalletFilter
+                    {
+                        Name = new StringFilter { Equal = transaction.WalletName },
+                        UserId = new GuidFilter { Equal = transaction.UserId }
+                    };
+                    Wallet wallet = await UnitOfWork.WalletRepository.Get(walletFilter);
+
+
                     transaction.Id = Guid.NewGuid();
+                    transaction.WalletId = wallet.Id;
+                    transaction.CategoryId = category.Id;
+                    if (category.Type == CategoryType.Inflow)
+                        wallet.Balance += transaction.Amount;
+                    else wallet.Balance -= transaction.Amount;
+
+                    await UnitOfWork.WalletRepository.Update(wallet);
                     await UnitOfWork.TransactionRepository.Create(transaction);
                     await UnitOfWork.Commit();
                 }

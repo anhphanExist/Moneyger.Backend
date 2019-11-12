@@ -33,7 +33,8 @@ namespace Moneyger.Controllers.Transaction
                 Amount = transactionRequestDTO.Amount,
                 CategoryName = transactionRequestDTO.CategoryName,
                 Date = transactionRequestDTO.Date,
-                Note = transactionRequestDTO.Note
+                Note = transactionRequestDTO.Note,
+                UserId = currentUserId
             };
 
             Entities.Transaction res = await transactionService.Create(newTransaction);

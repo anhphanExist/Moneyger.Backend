@@ -10,6 +10,7 @@ namespace Moneyger.Entities
     {
         public Guid Id { get; set; }
         public Guid WalletId { get; set; }
+        public Guid UserId { get; set; }
         public string WalletName { get; set; }
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }

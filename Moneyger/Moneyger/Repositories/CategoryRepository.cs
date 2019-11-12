@@ -11,6 +11,7 @@ namespace Moneyger.Repositories
     public interface ICategoryRepository
     {
         Task<Category> Get(Guid Id);
+        Task<Category> Get(CategoryFilter filter);
         Task<int> Count(CategoryFilter filter);
         Task<List<Category>> List(CategoryFilter filter);
     }
@@ -79,6 +80,19 @@ namespace Moneyger.Repositories
                 Name = category.Name,
                 Type = category.Type == false? CategoryType.Outflow : CategoryType.Inflow,
                 Image = category.Image
+            };
+        }
+
+        public async Task<Category> Get(CategoryFilter filter)
+        {
+            IQueryable<CategoryDAO> categoryDAOs = wASContext.Category.AsNoTracking();
+            CategoryDAO categoryDAO = DynamicFilter(categoryDAOs, filter).FirstOrDefault();
+            return new Category
+            {
+                Id = categoryDAO.Id,
+                Name = categoryDAO.Name,
+                Type = categoryDAO.Type == false? CategoryType.Outflow : CategoryType.Inflow,
+                Image = categoryDAO.Image
             };
         }
 
