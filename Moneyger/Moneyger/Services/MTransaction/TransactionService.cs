@@ -198,20 +198,24 @@ namespace Moneyger.Services.MTransaction
                 // Neu ngay hom do co transactions thi tao 1 TransactionDayGroup moi
                 if (transactions != null)
                 {
-                    decimal inflow = 0;
-                    decimal outflow = 0;
-                    transactions.ForEach(t => 
+                    if (transactions.Count > 0)
                     {
-                        if (t.Amount < 0) outflow += t.Amount;
-                        else inflow += t.Amount;
-                    });
-                    result.Add(new TransactionDayGroup
-                    {
-                        Date = d,
-                        Transactions = transactions,
-                        Inflow = inflow,
-                        Outflow = outflow
-                    });
+                        decimal inflow = 0;
+                        decimal outflow = 0;
+                        transactions.ForEach(t =>
+                        {
+                            if (t.Amount < 0) outflow += t.Amount;
+                            else inflow += t.Amount;
+                        });
+                        result.Add(new TransactionDayGroup
+                        {
+                            Date = d,
+                            Transactions = transactions,
+                            Inflow = inflow,
+                            Outflow = outflow
+                        });
+                    }
+                    
                 }
             });
 

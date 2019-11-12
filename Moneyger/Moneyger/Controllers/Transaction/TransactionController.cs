@@ -68,11 +68,11 @@ namespace Moneyger.Controllers.Transaction
             List<TransactionDayGroupDTO> transactionDayGroupDTOs = new List<TransactionDayGroupDTO>();
 
             // Voi moi DayGroupDTO thi gan list transactionDTO
-            res.TransactionDayGroups.ForEach(tdg => 
+            res.TransactionDayGroups.ToList().ForEach(tdg => 
             {
                 // Tao list transactionDTO
                 List<TransactionDTO> transactionDTOs = new List<TransactionDTO>();
-                tdg.Transactions.ForEach(t => transactionDTOs.Add(new TransactionDTO
+                tdg.Transactions.ToList().ForEach(t => transactionDTOs.Add(new TransactionDTO
                 {
                     WalletName = t.WalletName,
                     Date = t.Date,
