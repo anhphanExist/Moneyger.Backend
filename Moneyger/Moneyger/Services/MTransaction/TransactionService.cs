@@ -182,12 +182,12 @@ namespace Moneyger.Services.MTransaction
             List<DateTime> dates = GetDates(filter.Year, filter.Month);
 
             // Trong moi ngay ma co Transaction thi tao 1 TransactionDayGroup
-            dates.ForEach(async d =>
+            foreach (DateTime date in dates)
             {
                 // Tao filter theo tung ngay trong thang
                 TransactionFilter transactionFilter = new TransactionFilter
                 {
-                    Date = new DateTimeFilter { Equal = d },
+                    Date = new DateTimeFilter { Equal = date },
                     WalletName = new StringFilter { Equal = filter.WalletName },
                     UserId = new GuidFilter { Equal = filter.UserId }
                 };
@@ -209,15 +209,15 @@ namespace Moneyger.Services.MTransaction
                         });
                         result.Add(new TransactionDayGroup
                         {
-                            Date = d,
+                            Date = date,
                             Transactions = transactions,
                             Inflow = inflow,
                             Outflow = outflow
                         });
                     }
-                    
                 }
-            });
+
+            }
 
             // Tra ket qua
             return result;
