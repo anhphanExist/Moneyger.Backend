@@ -97,7 +97,7 @@ namespace Moneyger.Repositories
                 WalletName = transactionDAO.Wallet.Name,
                 CategoryId = transactionDAO.CategoryId,
                 CategoryName = transactionDAO.Category.Name,
-                Amount = transactionDAO.Amount,
+                Amount = transactionDAO.Category.Type? transactionDAO.Amount : 0 - transactionDAO.Amount,
                 Date = transactionDAO.Date,
                 Note = transactionDAO.Note
             };
@@ -115,7 +115,7 @@ namespace Moneyger.Repositories
                     WalletName = transaction.Wallet.Name,
                     CategoryId = transaction.CategoryId,
                     CategoryName = transaction.Category.Name,
-                    Amount = transaction.Amount,
+                    Amount = transaction.Category.Type? transaction.Amount : 0 - transaction.Amount,
                     Note = transaction.Note,
                     Date = transaction.Date
             }).ToListAsync();
