@@ -154,8 +154,11 @@ namespace Moneyger.Repositories
             if (filter.Id != null)
                 query = query.Where(q => q.Id, filter.Id);
             if (filter.Date != null)
-                query = query.Where(q => q.Date, filter.Date);
-
+                query = query.Where(q => 
+                    q.Date.Day == filter.Date.Equal.Value.Day && 
+                    q.Date.Month == filter.Date.Equal.Value.Month && 
+                    q.Date.Year == filter.Date.Equal.Value.Year
+                );
             return query;
         }
 
