@@ -93,7 +93,7 @@ namespace Moneyger.Services.MTransaction
                 transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountEmpty);
                 return false;
             }              
-            if (transaction.Amount <= 0 || transaction.Amount.ToString().Length > 15)
+            if (transaction.Amount <= 0)
             {
                 transaction.AddError(nameof(TransactionValidator), nameof(transaction.Amount), ErrorCode.AmountInvalid);
                 return false;
