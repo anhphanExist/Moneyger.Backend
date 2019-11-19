@@ -24,6 +24,7 @@ namespace Moneyger.Common
 
         public DataEntity()
         {
+            Errors = new List<string>();
         }
 
         public void AddError(string className, string Key, Enum Value)

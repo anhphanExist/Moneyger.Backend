@@ -51,8 +51,9 @@ namespace Moneyger.Common
             {
                 return AuthenticateResult.Fail("Invalid Authorization Header");
             }
-
             if (user == null)
+                return AuthenticateResult.Fail("Invalid Username or Password");
+            else if (user.Errors.Count > 0)
                 return AuthenticateResult.Fail("Invalid Username or Password");
 
             var claims = new[] {

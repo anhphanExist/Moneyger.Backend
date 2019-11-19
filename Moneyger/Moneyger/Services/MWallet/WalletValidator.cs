@@ -162,7 +162,7 @@ namespace Moneyger.Services.MWallet
                 wallet.AddError(nameof(Wallet), nameof(wallet.Balance), ErrorCode.InitBalanceLimited);
                 return false;
             }
-            else if (wallet.Balance <= 0)
+            else if (wallet.Balance < 0)
             {
                 wallet.AddError(nameof(Wallet), nameof(wallet.Balance), ErrorCode.InitBalanceInvalid);
                 return false;

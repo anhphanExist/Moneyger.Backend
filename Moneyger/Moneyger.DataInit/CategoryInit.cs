@@ -16,7 +16,56 @@ namespace Moneyger.DataInit
         public List<string> Init(int count = 1)
         {
             List<string> returnList = new List<string>();
-            string baseCode = "Category";
+            List<string> outflowCategories = new List<string>
+            {
+                "Bills",
+                "Business",
+                "Education",
+                "Entertainment",
+                "Family",
+                "Punishment Charge",
+                "Food",
+                "Gifts and Donation",
+                "Health and Fitness",
+                "Insurances",
+                "Investment",
+                "Shopping",
+                "OtherExpenses",
+                "Transportation",
+                "Travel",
+                "Withdrawal"
+            };
+            List<string> inflowCategories = new List<string>
+            {
+                "Award",
+                "Gifts",
+                "Interest Money",
+                "OtherIncome",
+                "Salary",
+                "Selling"
+            };
+
+            foreach (string item in outflowCategories)
+            {
+                wASContext.Add(new CategoryDAO
+                {
+                    Id = CreateGuid(item),
+                    Type = false,
+                    Name = item
+                });
+                returnList.Add(item);
+            }
+            
+            foreach (string item in inflowCategories)
+            {
+                wASContext.Add(new CategoryDAO
+                {
+                    Id = CreateGuid(item),
+                    Type = true,
+                    Name = item
+                });
+                returnList.Add(item);
+            }
 
             wASContext.Category.Add(new CategoryDAO
             {
@@ -32,21 +81,6 @@ namespace Moneyger.DataInit
                 Name = "Wallet Transfer"
             });
             returnList.Add("Wallet Transfer Destination");
-
-
-            for (int i = 0; i < count; i++)
-            {
-                string code = baseCode + i.ToString();
-
-
-                wASContext.Category.Add(new CategoryDAO
-                {
-                    Id = CreateGuid(code),
-                    Name = code,
-                    Type = i % 2 == 0
-                });
-                returnList.Add(code);
-            }
 
             CategoryCodes.AddRange(returnList);
             return returnList;

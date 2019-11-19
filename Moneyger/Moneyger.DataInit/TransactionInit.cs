@@ -28,7 +28,7 @@ namespace Moneyger.DataInit
                     WalletId = CreateGuid(walletId),
                     CategoryId = CreateGuid(categoryId),
                     Amount = i * 10000 + 10000,
-                    Date = new DateTime(2000, i % 12 + 1, i % 28 + 1),
+                    Date = new DateTime(2019, i % 12 + 1, i % 28 + 1),
                     Note = code,
                 });
                 returnList.Add(code);

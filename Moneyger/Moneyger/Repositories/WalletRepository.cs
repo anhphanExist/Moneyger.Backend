@@ -59,18 +59,24 @@ namespace Moneyger.Repositories
 
         public async Task<bool> Delete(Guid Id)
         {
-            WalletDAO walletDAO = wASContext.Wallet.Where(w => w.Id.Equals(Id)).FirstOrDefault();
             try
             {
+                await wASContext.Transaction
+                .Where(t => t.WalletId.Equals(Id))
+                .AsNoTracking()
+                .DeleteFromQueryAsync();
+                WalletDAO walletDAO = wASContext.Wallet
+                    .Where(w => w.Id.Equals(Id))
+                    .AsNoTracking()
+                    .FirstOrDefault();
                 wASContext.Wallet.Remove(walletDAO);
                 await wASContext.SaveChangesAsync();
+                return true;
             }
-            catch
+            catch (Exception e)
             {
-                wASContext.Wallet.Update(walletDAO);
-                await wASContext.SaveChangesAsync();
+                throw e;
             }
-            return true;
         }
 
         public async Task<Wallet> Get(WalletFilter filter)

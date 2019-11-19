@@ -27,7 +27,7 @@ namespace Moneyger.DataInit
                 {
                     Id = CreateGuid(code),
                     Username = code,
-                    Password = code
+                    Password = "123456"
                 });
                 returnList.Add(code);
             }
