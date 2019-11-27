@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace EShop
+namespace Moneyger.Common
 {
     public class MyDesignTimeService : IDesignTimeServices
     {
